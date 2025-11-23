@@ -69,6 +69,17 @@ def add_exception_handlers(app: FastAPI):
         api_exc = handle_validation_error(exc)
         
         # Log del error usando nuestro sistema de logging
+        body_str = ""
+        try:
+            # La excepción RequestValidationError contiene información sobre el cuerpo
+            if hasattr(exc, 'body') and exc.body:
+                if isinstance(exc.body, bytes):
+                    body_str = exc.body.decode('utf-8')
+                else:
+                    body_str = str(exc.body)
+        except Exception:
+            body_str = "Error al leer el cuerpo desde la excepción."
+
         logger.log_api_error(
             endpoint=str(request.url),
             method=request.method,
@@ -78,7 +89,7 @@ def add_exception_handlers(app: FastAPI):
                 "request_id": request_id,
                 "error_code": api_exc.error_code,
                 "detail": api_exc.detail,
-                "body": await request.body()
+                "body": body_str[:500]  # Limitar el tamaño del body logueado
             }
         )
         

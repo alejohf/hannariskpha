@@ -366,3 +366,1523 @@ NoneType: None
 
 ==============================***=====================
 2025-11-23 10:19:50 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/kpis (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:27:12
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:27:12.551972'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:27:12 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:34:17
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:34:17.663053'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:34:17 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:35:29
+Contexto: Endpoint: GET /api/health (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/health
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/health', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:35:29.341199'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:35:29 - hannariskpro - ERROR - Error en Endpoint: GET /api/health (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:35:29
+Contexto: Endpoint: GET /api/health (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/health
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/health', 'status_code': 200, 'process_time': '0.0010s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:35:29.342200'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:35:29 - hannariskpro - ERROR - Error en Endpoint: GET /api/health (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:36:27
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:36:27.929391'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:36:27 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:38:02
+Contexto: Endpoint: GET /api/dashboard/kpis (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/kpis
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/dashboard/kpis', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:38:02.732029'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:38:02 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/kpis (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:38:02
+Contexto: Endpoint: http://localhost:8092/api/dashboard/kpis (GET) - Status: 401
+Tipo de Error: BaseAPIException
+Mensaje: 
+Información Adicional:
+  endpoint: http://localhost:8092/api/dashboard/kpis
+  method: GET
+  status_code: 401
+  request_data: {'request_id': '2280aa4f-f0fe-4677-aed6-9641458a00db', 'error_code': 'FASTAPI_401', 'detail': 'Se requiere autenticación'}
+Traceback:
+Traceback (most recent call last):
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 273, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 192, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\concurrency.py", line 41, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\anyio\to_thread.py", line 56, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2485, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 976, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\DEVFULLAPP\appPHAV3\backend\main.py", line 1743, in dashboard_kpis
+    # Allow anonymous read in dev only
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+fastapi.exceptions.HTTPException
+
+==============================***=====================
+2025-11-23 10:38:02 - hannariskpro - ERROR - Error en Endpoint: http://localhost:8092/api/dashboard/kpis (GET) - Status: 401: BaseAPIException - 
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:38:02
+Contexto: Endpoint: GET /api/dashboard/kpis (RESPONSE) - Status: 401
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/kpis
+  method: RESPONSE
+  status_code: 401
+  request_data: {'method': 'GET', 'path': '/api/dashboard/kpis', 'status_code': 401, 'process_time': '0.0075s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:38:02.739549'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:38:02 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/kpis (RESPONSE) - Status: 401: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:38:32
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:38:32.539805'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:38:32 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:45:38
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:45:38.645904'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:45:38 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:48:34
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:48:34.854571'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:48:34 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:50:10
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:50:10.046427'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:50:10 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:52:44
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:52:44.864683'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:52:44 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:26:20
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:26:20.683301'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:26:20 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:26:20
+Contexto: Endpoint: POST /api/auth/login (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'status_code': 200, 'process_time': '0.1856s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:26:20.868896'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:26:20 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:26:20
+Contexto: Endpoint: GET /api/me (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:26:20.921704'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:26:20 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:26:20
+Contexto: Endpoint: GET /api/me (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'status_code': 200, 'process_time': '0.0122s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:26:20.933950'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:26:20 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:26:21
+Contexto: Endpoint: GET /api/me (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:26:21.034393'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:26:21 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:26:21
+Contexto: Endpoint: GET /api/me (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'status_code': 200, 'process_time': '0.0058s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:26:21.040165'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:26:21 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:26:52
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:26:52.414320'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:26:52 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:26:52
+Contexto: Endpoint: http://localhost:8092/api/auth/login (POST) - Status: 422
+Tipo de Error: ValidationError
+Mensaje: ('JSON decode error', 'body.37')
+Información Adicional:
+  endpoint: http://localhost:8092/api/auth/login
+  method: POST
+  status_code: 422
+  request_data: {'request_id': 'd9a221b7-9ae3-4b8a-8bf6-1f3d39568441', 'error_code': 'VALIDATION_ERROR', 'detail': "Error en el campo 'body.37': JSON decode error", 'body': '{"username": "admin", "password": "pa\\$\\$wr0rd"}'}
+Traceback:
+Traceback (most recent call last):
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 239, in app
+    json_body = await request.json()
+                ^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\requests.py", line 244, in json
+    self._json = json.loads(body)
+                 ^^^^^^^^^^^^^^^^
+  File "C:\Users\userfh\AppData\Local\Programs\Python\Python311\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\userfh\AppData\Local\Programs\Python\Python311\Lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\userfh\AppData\Local\Programs\Python\Python311\Lib\json\decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Invalid \escape: line 1 column 38 (char 37)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 245, in app
+    raise RequestValidationError(
+fastapi.exceptions.RequestValidationError: [{'type': 'json_invalid', 'loc': ('body', 37), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': 'Invalid \\escape'}}]
+
+==============================***=====================
+2025-11-23 11:26:52 - hannariskpro - ERROR - Error en Endpoint: http://localhost:8092/api/auth/login (POST) - Status: 422: ValidationError - ('JSON decode error', 'body.37')
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:26:52
+Contexto: Endpoint: POST /api/auth/login (RESPONSE) - Status: 422
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: RESPONSE
+  status_code: 422
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'status_code': 422, 'process_time': '0.0131s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:26:52.427425'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:26:52 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (RESPONSE) - Status: 422: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:28:05
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:28:05.399599'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:28:05 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:28:05
+Contexto: Endpoint: http://localhost:8092/api/auth/login (POST) - Status: 422
+Tipo de Error: ValidationError
+Mensaje: ('Input should be a valid dictionary or object to extract fields from', 'body')
+Información Adicional:
+  endpoint: http://localhost:8092/api/auth/login
+  method: POST
+  status_code: 422
+  request_data: {'request_id': 'd653cf13-1175-474a-b473-70b8e6520a68', 'error_code': 'VALIDATION_ERROR', 'detail': "Error en el campo 'body': Input should be a valid dictionary or object to extract fields from", 'body': 'username=admin&password=pa$$wr0rd'}
+Traceback:
+Traceback (most recent call last):
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 271, in app
+    raise RequestValidationError(_normalize_errors(errors), body=body)
+fastapi.exceptions.RequestValidationError: [{'type': 'model_attributes_type', 'loc': ('body',), 'msg': 'Input should be a valid dictionary or object to extract fields from', 'input': b'username=admin&password=pa$$wr0rd', 'url': 'https://errors.pydantic.dev/2.12/v/model_attributes_type'}]
+
+==============================***=====================
+2025-11-23 11:28:05 - hannariskpro - ERROR - Error en Endpoint: http://localhost:8092/api/auth/login (POST) - Status: 422: ValidationError - ('Input should be a valid dictionary or object to extract fields from', 'body')
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:28:05
+Contexto: Endpoint: POST /api/auth/login (RESPONSE) - Status: 422
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: RESPONSE
+  status_code: 422
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'status_code': 422, 'process_time': '0.0077s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:28:05.407349'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:28:05 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (RESPONSE) - Status: 422: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:28:18
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:28:18.178749'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:28:18 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:28:18
+Contexto: Endpoint: http://localhost:8092/api/auth/login (POST) - Status: 422
+Tipo de Error: ValidationError
+Mensaje: ('Input should be a valid dictionary or object to extract fields from', 'body')
+Información Adicional:
+  endpoint: http://localhost:8092/api/auth/login
+  method: POST
+  status_code: 422
+  request_data: {'request_id': '67a4d4f0-532b-4fac-87d1-e38bde000748', 'error_code': 'VALIDATION_ERROR', 'detail': "Error en el campo 'body': Input should be a valid dictionary or object to extract fields from", 'body': 'username=admin&password=pa$$wr0rd'}
+Traceback:
+Traceback (most recent call last):
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 271, in app
+    raise RequestValidationError(_normalize_errors(errors), body=body)
+fastapi.exceptions.RequestValidationError: [{'type': 'model_attributes_type', 'loc': ('body',), 'msg': 'Input should be a valid dictionary or object to extract fields from', 'input': b'username=admin&password=pa$$wr0rd', 'url': 'https://errors.pydantic.dev/2.12/v/model_attributes_type'}]
+
+==============================***=====================
+2025-11-23 11:28:18 - hannariskpro - ERROR - Error en Endpoint: http://localhost:8092/api/auth/login (POST) - Status: 422: ValidationError - ('Input should be a valid dictionary or object to extract fields from', 'body')
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:28:18
+Contexto: Endpoint: POST /api/auth/login (RESPONSE) - Status: 422
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: RESPONSE
+  status_code: 422
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'status_code': 422, 'process_time': '0.0069s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:28:18.185672'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:28:18 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (RESPONSE) - Status: 422: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:28:42
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:28:42.116863'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:28:42 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:28:42
+Contexto: Endpoint: http://localhost:8092/api/auth/login (POST) - Status: 422
+Tipo de Error: ValidationError
+Mensaje: ('JSON decode error', 'body.37')
+Información Adicional:
+  endpoint: http://localhost:8092/api/auth/login
+  method: POST
+  status_code: 422
+  request_data: {'request_id': 'c497db2a-68a3-493d-85e3-4410a8ae432e', 'error_code': 'VALIDATION_ERROR', 'detail': "Error en el campo 'body.37': JSON decode error", 'body': '{"username": "admin", "password": "pa\\$\\$wr0rd"}'}
+Traceback:
+Traceback (most recent call last):
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 239, in app
+    json_body = await request.json()
+                ^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\requests.py", line 244, in json
+    self._json = json.loads(body)
+                 ^^^^^^^^^^^^^^^^
+  File "C:\Users\userfh\AppData\Local\Programs\Python\Python311\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\userfh\AppData\Local\Programs\Python\Python311\Lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\userfh\AppData\Local\Programs\Python\Python311\Lib\json\decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Invalid \escape: line 1 column 38 (char 37)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 245, in app
+    raise RequestValidationError(
+fastapi.exceptions.RequestValidationError: [{'type': 'json_invalid', 'loc': ('body', 37), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': 'Invalid \\escape'}}]
+
+==============================***=====================
+2025-11-23 11:28:42 - hannariskpro - ERROR - Error en Endpoint: http://localhost:8092/api/auth/login (POST) - Status: 422: ValidationError - ('JSON decode error', 'body.37')
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:28:42
+Contexto: Endpoint: POST /api/auth/login (RESPONSE) - Status: 422
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: RESPONSE
+  status_code: 422
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'status_code': 422, 'process_time': '0.0053s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:28:42.122145'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:28:42 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (RESPONSE) - Status: 422: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:29:12
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:29:12.532682'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:29:12 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:29:12
+Contexto: Endpoint: http://localhost:8092/api/auth/login (POST) - Status: 422
+Tipo de Error: ValidationError
+Mensaje: ('JSON decode error', 'body.37')
+Información Adicional:
+  endpoint: http://localhost:8092/api/auth/login
+  method: POST
+  status_code: 422
+  request_data: {'request_id': '8e9afc06-aaf9-417f-867c-fab9c62d39a2', 'error_code': 'VALIDATION_ERROR', 'detail': "Error en el campo 'body.37': JSON decode error", 'body': '{"username": "admin", "password": "pa\\$\\$wr0rd"}'}
+Traceback:
+Traceback (most recent call last):
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 239, in app
+    json_body = await request.json()
+                ^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\requests.py", line 244, in json
+    self._json = json.loads(body)
+                 ^^^^^^^^^^^^^^^^
+  File "C:\Users\userfh\AppData\Local\Programs\Python\Python311\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\userfh\AppData\Local\Programs\Python\Python311\Lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\userfh\AppData\Local\Programs\Python\Python311\Lib\json\decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Invalid \escape: line 1 column 38 (char 37)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 245, in app
+    raise RequestValidationError(
+fastapi.exceptions.RequestValidationError: [{'type': 'json_invalid', 'loc': ('body', 37), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': 'Invalid \\escape'}}]
+
+==============================***=====================
+2025-11-23 11:29:12 - hannariskpro - ERROR - Error en Endpoint: http://localhost:8092/api/auth/login (POST) - Status: 422: ValidationError - ('JSON decode error', 'body.37')
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:29:12
+Contexto: Endpoint: POST /api/auth/login (RESPONSE) - Status: 422
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: RESPONSE
+  status_code: 422
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'status_code': 422, 'process_time': '0.0081s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:29:12.540765'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:29:12 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (RESPONSE) - Status: 422: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:29:37
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:29:37.390019'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:29:37 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:29:37
+Contexto: Endpoint: http://localhost:8092/api/auth/login (POST) - Status: 422
+Tipo de Error: ValidationError
+Mensaje: ('JSON decode error', 'body.37')
+Información Adicional:
+  endpoint: http://localhost:8092/api/auth/login
+  method: POST
+  status_code: 422
+  request_data: {'request_id': '8c1bdc8c-8054-40fb-94b2-93c7e5578099', 'error_code': 'VALIDATION_ERROR', 'detail': "Error en el campo 'body.37': JSON decode error", 'body': '{"username": "admin", "password": "pa\\$\\$wr0rd"}'}
+Traceback:
+Traceback (most recent call last):
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 239, in app
+    json_body = await request.json()
+                ^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\requests.py", line 244, in json
+    self._json = json.loads(body)
+                 ^^^^^^^^^^^^^^^^
+  File "C:\Users\userfh\AppData\Local\Programs\Python\Python311\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\userfh\AppData\Local\Programs\Python\Python311\Lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\userfh\AppData\Local\Programs\Python\Python311\Lib\json\decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Invalid \escape: line 1 column 38 (char 37)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 245, in app
+    raise RequestValidationError(
+fastapi.exceptions.RequestValidationError: [{'type': 'json_invalid', 'loc': ('body', 37), 'msg': 'JSON decode error', 'input': {}, 'ctx': {'error': 'Invalid \\escape'}}]
+
+==============================***=====================
+2025-11-23 11:29:37 - hannariskpro - ERROR - Error en Endpoint: http://localhost:8092/api/auth/login (POST) - Status: 422: ValidationError - ('JSON decode error', 'body.37')
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:29:37
+Contexto: Endpoint: POST /api/auth/login (RESPONSE) - Status: 422
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: RESPONSE
+  status_code: 422
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'status_code': 422, 'process_time': '0.0058s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:29:37.395830'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:29:37 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (RESPONSE) - Status: 422: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:30:59
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:30:59.623928'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:30:59 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:30:59
+Contexto: Endpoint: POST /api/auth/login (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'status_code': 200, 'process_time': '0.1573s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:30:59.781193'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:30:59 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:31:15
+Contexto: Endpoint: GET /api/health (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/health
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/health', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:31:15.597950'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:31:15 - hannariskpro - ERROR - Error en Endpoint: GET /api/health (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:31:15
+Contexto: Endpoint: GET /api/health (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/health
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/health', 'status_code': 200, 'process_time': '0.0026s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:31:15.600505'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:31:15 - hannariskpro - ERROR - Error en Endpoint: GET /api/health (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:31:31
+Contexto: Endpoint: GET /api/dashboard/kpis (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/kpis
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/dashboard/kpis', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:31:31.622296'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:31:31 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/kpis (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:31:31
+Contexto: Endpoint: GET /api/dashboard/kpis (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/kpis
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/dashboard/kpis', 'status_code': 200, 'process_time': '0.0482s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:31:31.670527'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:31:31 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/kpis (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:23
+Contexto: Endpoint: GET /api/empresas (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/empresas
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/empresas', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:23.470962'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:23 - hannariskpro - ERROR - Error en Endpoint: GET /api/empresas (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:23
+Contexto: Endpoint: GET /api/empresas (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/empresas
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/empresas', 'status_code': 200, 'process_time': '0.0115s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:23.482433'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:23 - hannariskpro - ERROR - Error en Endpoint: GET /api/empresas (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:23
+Contexto: Endpoint: GET /api/empresas (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/empresas
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/empresas', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:23.485583'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:23 - hannariskpro - ERROR - Error en Endpoint: GET /api/empresas (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:23
+Contexto: Endpoint: GET /api/empresas (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/empresas
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/empresas', 'status_code': 200, 'process_time': '0.0099s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:23.495528'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:23 - hannariskpro - ERROR - Error en Endpoint: GET /api/empresas (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:28
+Contexto: Endpoint: GET /api/me (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:28.592905'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:28 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:28
+Contexto: Endpoint: GET /api/me (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'status_code': 200, 'process_time': '0.0079s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:28.600793'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:28 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:28
+Contexto: Endpoint: GET /api/me (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:28.632561'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:28 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:28
+Contexto: Endpoint: GET /api/me (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'status_code': 200, 'process_time': '0.0080s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:28.640535'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:28 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:29
+Contexto: Endpoint: GET /api/me (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:29.777930'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:29 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:29
+Contexto: Endpoint: GET /api/me (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'status_code': 200, 'process_time': '0.0087s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:29.786648'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:29 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:29
+Contexto: Endpoint: GET /api/me (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:29.820535'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:29 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:29
+Contexto: Endpoint: GET /api/me (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'status_code': 200, 'process_time': '0.0080s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:29.828521'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:29 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:36
+Contexto: Endpoint: GET /api/me (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:36.963990'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:36 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:36
+Contexto: Endpoint: GET /api/me (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'status_code': 200, 'process_time': '0.0182s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:36.982176'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:36 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:36
+Contexto: Endpoint: GET /api/me (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:36.992793'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:36 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:37
+Contexto: Endpoint: GET /api/me (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/me
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/me', 'status_code': 200, 'process_time': '0.0111s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:37.003905'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:37 - hannariskpro - ERROR - Error en Endpoint: GET /api/me (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:43
+Contexto: Endpoint: GET /api/empresas (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/empresas
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/empresas', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:43.307397'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:43 - hannariskpro - ERROR - Error en Endpoint: GET /api/empresas (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:43
+Contexto: Endpoint: GET /api/empresas (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/empresas
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/empresas', 'status_code': 200, 'process_time': '0.0139s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:43.321286'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:43 - hannariskpro - ERROR - Error en Endpoint: GET /api/empresas (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:43
+Contexto: Endpoint: GET /api/empresas (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/empresas
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/empresas', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:43.326776'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:43 - hannariskpro - ERROR - Error en Endpoint: GET /api/empresas (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:43
+Contexto: Endpoint: GET /api/empresas (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/empresas
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/empresas', 'status_code': 200, 'process_time': '0.0092s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:43.335982'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:43 - hannariskpro - ERROR - Error en Endpoint: GET /api/empresas (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:44
+Contexto: Endpoint: GET /api/metodologias (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/metodologias
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/metodologias', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:44.301080'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:44 - hannariskpro - ERROR - Error en Endpoint: GET /api/metodologias (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:44
+Contexto: Endpoint: GET /api/metodologias (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/metodologias
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/metodologias', 'status_code': 200, 'process_time': '0.0135s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:44.314580'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:44 - hannariskpro - ERROR - Error en Endpoint: GET /api/metodologias (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:45
+Contexto: Endpoint: GET /api/usuarios (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/usuarios
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/usuarios', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:45.303990'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:45 - hannariskpro - ERROR - Error en Endpoint: GET /api/usuarios (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:45
+Contexto: Endpoint: GET /api/usuarios (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/usuarios
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/usuarios', 'status_code': 200, 'process_time': '0.0134s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:45.317366'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:45 - hannariskpro - ERROR - Error en Endpoint: GET /api/usuarios (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:45
+Contexto: Endpoint: GET /api/empresas (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/empresas
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/empresas', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:45.909080'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:45 - hannariskpro - ERROR - Error en Endpoint: GET /api/empresas (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:45
+Contexto: Endpoint: GET /api/empresas (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/empresas
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/empresas', 'status_code': 200, 'process_time': '0.0115s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:45.920585'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:45 - hannariskpro - ERROR - Error en Endpoint: GET /api/empresas (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:49
+Contexto: Endpoint: GET /api/salvaguardas (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/salvaguardas
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/salvaguardas', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:49.042252'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:49 - hannariskpro - ERROR - Error en Endpoint: GET /api/salvaguardas (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:49
+Contexto: Endpoint: GET /api/salvaguardas (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/salvaguardas
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/salvaguardas', 'status_code': 200, 'process_time': '0.0114s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:49.053695'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:49 - hannariskpro - ERROR - Error en Endpoint: GET /api/salvaguardas (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:49
+Contexto: Endpoint: GET /api/salvaguardas (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/salvaguardas
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/salvaguardas', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:49.058316'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:49 - hannariskpro - ERROR - Error en Endpoint: GET /api/salvaguardas (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:49
+Contexto: Endpoint: GET /api/salvaguardas (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/salvaguardas
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/salvaguardas', 'status_code': 200, 'process_time': '0.0110s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:49.069333'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:49 - hannariskpro - ERROR - Error en Endpoint: GET /api/salvaguardas (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:50
+Contexto: Endpoint: GET /api/auditoria (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/auditoria
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/auditoria', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:50.479933'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:50 - hannariskpro - ERROR - Error en Endpoint: GET /api/auditoria (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:50
+Contexto: Endpoint: GET /api/auditoria (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/auditoria
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/auditoria', 'status_code': 200, 'process_time': '0.0152s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:50.495162'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:50 - hannariskpro - ERROR - Error en Endpoint: GET /api/auditoria (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:51
+Contexto: Endpoint: GET /api/adjuntos (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/adjuntos
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/adjuntos', 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:51.483945'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:51 - hannariskpro - ERROR - Error en Endpoint: GET /api/adjuntos (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 11:32:51
+Contexto: Endpoint: GET /api/adjuntos (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/adjuntos
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/adjuntos', 'status_code': 200, 'process_time': '0.0129s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T11:32:51.496802'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 11:32:51 - hannariskpro - ERROR - Error en Endpoint: GET /api/adjuntos (RESPONSE) - Status: 200: NoneType - None

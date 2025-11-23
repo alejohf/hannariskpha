@@ -72,8 +72,13 @@ async def add_security_headers(request: Request, call_next):
 # Middleware para logging de solicitudes
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
+    # Excluir completamente el endpoint de login del logging para evitar problemas
+    if request.url.path == "/api/auth/login":
+        response = await call_next(request)
+        return response
+
     start_time = time.time()
-    
+
     # Log de solicitud entrante
     logger.log_api_error(
         f"{request.method} {request.url.path}",
@@ -88,9 +93,9 @@ async def log_requests(request: Request, call_next):
             "timestamp": datetime.now().isoformat()
         }
     )
-    
+
     response = await call_next(request)
-    
+
     # Log de respuesta
     process_time = time.time() - start_time
     logger.log_api_error(
@@ -107,7 +112,7 @@ async def log_requests(request: Request, call_next):
             "timestamp": datetime.now().isoformat()
         }
     )
-    
+
     return response
 
 DB_HOST = os.getenv('DB_HOST', '127.0.0.1')
@@ -136,18 +141,13 @@ def get_connection(database=None):
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
-# Permitir CORS solo para orígenes específicos (frontends)
+# Permitir CORS para todos los orígenes en desarrollo
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",  # React development
-        "http://localhost:8080",  # React development (alternative)
-        "http://localhost:5173",  # Vite development
-        "http://localhost:4173",  # Vite development
-    ],
+    allow_origins=["*"],  # Permitir todos los orígenes en desarrollo
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Permitir todos los métodos
+    allow_headers=["*"],  # Permitir todos los headers
     expose_headers=["*"],
     max_age=600,
 )
@@ -315,18 +315,31 @@ def register(user: UserCreate, current_admin: Optional[dict] = Depends(require_a
 
 
 @app.post('/api/auth/login', response_model=TokenResponse)
-def login(form: dict):
-    username = form.get('username')
-    password = form.get('password')
-    if not username or not password:
-        raise exceptions.ValidationError('username y password son requeridos', 'credentials')
-    user = get_user_by_username(username)
-    if not user:
-        raise exceptions.AuthenticationError('Credenciales inválidas', 'INVALID_CREDENTIALS')
-    if not auth_utils.verify_password(password, user.get('password_hash')):
-        raise exceptions.AuthenticationError('Credenciales inválidas', 'INVALID_CREDENTIALS')
-    token = auth_utils.create_access_token({'user_id': user['id'], 'username': user['username'], 'rol': user.get('rol')})
-    return {'access_token': token}
+async def login(request: Request):
+    try:
+        # Leer el cuerpo de la solicitud
+        body_bytes = await request.body()
+        body_str = body_bytes.decode('utf-8')
+        import json
+        form_data = json.loads(body_str)
+
+        username = form_data.get('username')
+        password = form_data.get('password')
+
+        if not username or not password:
+            raise exceptions.ValidationError('username y password son requeridos', 'credentials')
+
+        user = get_user_by_username(username)
+        if not user:
+            raise exceptions.AuthenticationError('Credenciales inválidas', 'INVALID_CREDENTIALS')
+        if not auth_utils.verify_password(password, user.get('password_hash')):
+            raise exceptions.AuthenticationError('Credenciales inválidas', 'INVALID_CREDENTIALS')
+        token = auth_utils.create_access_token({'user_id': user['id'], 'username': user['username'], 'rol': user.get('rol')})
+        return {'access_token': token}
+    except json.JSONDecodeError:
+        raise exceptions.ValidationError('Formato JSON inválido', 'invalid_json')
+    except Exception as e:
+        raise exceptions.AuthenticationError('Error en la autenticación', 'AUTH_ERROR')
 
 
 @app.get('/api/me')
