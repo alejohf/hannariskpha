@@ -79,4 +79,18 @@ export async function fetchMe() {
   return res.data
 }
 
-export default { setAuthToken, getAuthToken, login, fetchEstudios, fetchTable, fetchMe }
+export default {
+  setAuthToken,
+  getAuthToken,
+  login,
+  fetchEstudios,
+  fetchTable,
+  fetchMe,
+  fetchDashboardKpis,
+  fetchDashboardRiskMatrix,
+  fetchDashboardByLevel,
+  fetchDashboardByLocation,
+  fetchDashboardActionsCritical,
+  fetchDashboardTrends,
+  fetchDashboardActivity
+}
