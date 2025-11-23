@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CoreUI Mini</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Si el usuario abre la raíz '/', redirige inmediatamente a /login
+      // Esto evita que se muestre cualquier página estática accidental.
+      try {
+        if (window.location.pathname === '/' || window.location.pathname === '') {
+          window.location.replace('/login')
+        }
+      } catch (e) { /* no-op */ }
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
