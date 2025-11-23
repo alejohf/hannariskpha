@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hanna RiskPro - Frontend de ejemplo</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <h1 class="mt-4 mb-4 text-center">Hanna RiskPro - Frontend de ejemplo</h1>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-5">
+        <h2>Autenticación</h2>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h4 class="card-title">Login</h4>
+            <input id="loginUser" class="form-control mb-2" placeholder="username" />
+            <input id="loginPass" class="form-control mb-2" placeholder="password" type="password" />
+            <button id="btnLogin" class="btn btn-primary">Login</button>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h4 class="card-title">Registro (bootstrap)</h4>
+            <input id="regUser" class="form-control mb-2" placeholder="username" />
+            <input id="regPass" class="form-control mb-2" placeholder="password" type="password" />
+            <input id="regName" class="form-control mb-2" placeholder="Nombre completo" />
+            <input id="regEmail" class="form-control mb-2" placeholder="Email" />
+            <select id="regRole" class="form-select mb-2"><option>Colaborador</option><option>Administrador</option></select>
+            <button id="btnRegister" class="btn btn-success">Registrar</button>
+          </div>
+        </div>
+        <div class="mb-3">
+          <button id="btnLogout" class="btn btn-secondary">Logout</button>
+          <div class="mt-2">Token: <small id="tokenDisplay"></small></div>
+        </div>
+      </div>
+      <div class="col-md-7">
+        <h2>CRUD Rápido</h2>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h4>Crear Estudio</h4>
+            <input id="estNombre" class="form-control mb-2" placeholder="Nombre estudio"/>
+            <textarea id="estObjetivos" class="form-control mb-2" placeholder="Objetivos" rows="3"></textarea>
+            <button id="btnCrearEstudio" class="btn btn-primary">Crear Estudio</button>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h4>Listar Estudios</h4>
+            <button id="btnListEstudios" class="btn btn-info mb-2">Listar</button>
+            <pre id="outEstudios" style="max-height:200px;overflow:auto;background:#f7f7f7;padding:8px"></pre>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h4>Crear Nodo</h4>
+            <input id="nodoEstudioId" class="form-control mb-2" placeholder="estudio_id" />
+            <input id="nodoNombre" class="form-control mb-2" placeholder="nombre" />
+            <button id="btnCrearNodo" class="btn btn-primary">Crear Nodo</button>
+            <pre id="outNodos" style="background:#f7f7f7;padding:8px"></pre>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h4>Crear Recomendación</h4>
+            <input id="recEstudioId" class="form-control mb-2" placeholder="estudio_id" />
+            <input id="recDescripcion" class="form-control mb-2" placeholder="Descripción" />
+            <button id="btnCrearRec" class="btn btn-primary">Crear Recomendación</button>
+            <pre id="outRecs" style="background:#f7f7f7;padding:8px"></pre>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h4>Subir Adjunto</h4>
+            <input id="adjEstudioId" class="form-control mb-2" placeholder="estudio_id" />
+            <input id="adjFile" class="form-control mb-2" type="file" />
+            <button id="btnUpload" class="btn btn-primary">Subir</button>
+            <pre id="outAdj" style="background:#f7f7f7;padding:8px"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Bootstrap 5 JS (opcional, para componentes interactivos) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const API_BASE = 'http://127.0.0.1:8092/api';
+    const tokenKey = 'hana_token';
+    const tokenDisplay = document.getElementById('tokenDisplay');
+
+    function setToken(t){
+      if(t){ localStorage.setItem(tokenKey, t); tokenDisplay.textContent = t.slice(0,40) + (t.length>40? '...':''); }
+      else { localStorage.removeItem(tokenKey); tokenDisplay.textContent = ''; }
+    }
+    setToken(localStorage.getItem(tokenKey));
+
+    async function apiFetch(path, opts={}){
+      const headers = opts.headers || {};
+      const token = localStorage.getItem(tokenKey);
+      if(token) headers['Authorization'] = 'Bearer ' + token;
+      headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+      const res = await fetch(API_BASE + path, {...opts, headers});
+      if(!res.ok){
+        const txt = await res.text();
+        throw new Error(res.status + ' - ' + txt);
+      }
+      const ct = res.headers.get('content-type') || '';
+      if(ct.includes('application/json')) return res.json();
+      return res.text();
+    }
+
+    // Login
+    document.getElementById('btnLogin').addEventListener('click', async ()=>{
+      try{
+        const body = { username: document.getElementById('loginUser').value, password: document.getElementById('loginPass').value };
+        const r = await fetch(API_BASE + '/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+        const j = await r.json();
+        setToken(j.access_token);
+        alert('Login OK');
+      }catch(e){ alert('Login error: '+e.message); }
+    });
+
+    // Register (bootstrap)
+    document.getElementById('btnRegister').addEventListener('click', async ()=>{
+      try{
+        const body = { username: document.getElementById('regUser').value, password: document.getElementById('regPass').value, nombre_completo: document.getElementById('regName').value, email: document.getElementById('regEmail').value, rol: document.getElementById('regRole').value };
+        const token = localStorage.getItem(tokenKey);
+        const headers = {'Content-Type':'application/json'};
+        if(token) headers['Authorization'] = 'Bearer ' + token;
+        const r = await fetch(API_BASE + '/auth/register', { method:'POST', headers, body: JSON.stringify(body)});
+        const j = await r.json();
+        alert('Usuario creado id:' + j.usuario_id);
+      }catch(e){ alert('Register error: '+e.message); }
+    });
+
+    document.getElementById('btnLogout').addEventListener('click', ()=>{ setToken(null); alert('Logout OK'); });
+
+    // Estudio create/list
+    document.getElementById('btnCrearEstudio').addEventListener('click', async ()=>{
+      try{
+        const body = { nombre: document.getElementById('estNombre').value, objetivos: document.getElementById('estObjetivos').value };
+        const r = await apiFetch('//estudios', { method: 'POST', body: JSON.stringify(body) });
+        alert('Estudio creado id:' + r.estudio_id);
+      }catch(e){ alert('Error crear estudio: '+e.message); }
+    });
+
+    document.getElementById('btnListEstudios').addEventListener('click', async ()=>{
+      try{
+        const j = await apiFetch('/estudios');
+        document.getElementById('outEstudios').textContent = JSON.stringify(j, null, 2);
+      }catch(e){ document.getElementById('outEstudios').textContent = 'Error: '+e.message; }
+    });
+
+    // Nodos
+    document.getElementById('btnCrearNodo').addEventListener('click', async ()=>{
+      try{
+        const body = { estudio_id: parseInt(document.getElementById('nodoEstudioId').value), nombre: document.getElementById('nodoNombre').value };
+        const r = await apiFetch('/nodos', { method:'POST', body: JSON.stringify(body) });
+        document.getElementById('outNodos').textContent = JSON.stringify(r);
+      }catch(e){ document.getElementById('outNodos').textContent = 'Error: '+e.message; }
+    });
+
+    // Recomendaciones
+    document.getElementById('btnCrearRec').addEventListener('click', async ()=>{
+      try{
+        const body = { estudio_id: parseInt(document.getElementById('recEstudioId').value), descripcion: document.getElementById('recDescripcion').value };
+        const r = await apiFetch('/recomendaciones', { method:'POST', body: JSON.stringify(body) });
+        document.getElementById('outRecs').textContent = JSON.stringify(r);
+      }catch(e){ document.getElementById('outRecs').textContent = 'Error: '+e.message; }
+    });
+
+    // Upload adjunto
+    document.getElementById('btnUpload').addEventListener('click', async ()=>{
+      try{
+        const fileInput = document.getElementById('adjFile');
+        if(!fileInput.files.length) { alert('Seleccione archivo'); return; }
+        const fd = new FormData();
+        fd.append('file', fileInput.files[0]);
+        fd.append('estudio_id', document.getElementById('adjEstudioId').value || '');
+        const token = localStorage.getItem(tokenKey);
+        const headers = {};
+        if(token) headers['Authorization'] = 'Bearer ' + token;
+        const res = await fetch(API_BASE + '/adjuntos', { method:'POST', body: fd, headers });
+        const j = await res.json();
+        document.getElementById('outAdj').textContent = JSON.stringify(j, null, 2);
+      }catch(e){ document.getElementById('outAdj').textContent = 'Error: '+e.message; }
+    });
+
+  </script>
+</body>
+</html>

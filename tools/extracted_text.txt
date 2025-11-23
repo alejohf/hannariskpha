@@ -1,0 +1,210 @@
+Ingeniería de requisitos detallada para la aplicación de Prevención y Gestión de Riesgos, con un 
+enfoque en las metodologías HAZOP, What If, Checklist y What If/Checklist.   
+Ingeniería de Requisitos: Sistema de Gestión de Riesgos (Similar a PHA -Pro) 
+Nombre  del Proyecto: Hanna RiskPro - Sistema Inte gral de Análisis y Gestión de Riesgos 
+Industriales.  
+Objetivo : Proporcionar una plataforma digital para realizar análisis de riesgos industriales 
+utilizando metodologías estándar (HAZOP, What If, Checklist, What If/Checklist) en plantas de 
+procesamiento de gas y petróleo, permitiendo la creación, importación y exportación de 
+matrices de riesgo, gestión de estudios, revisiones y usuarios con diferentes niveles de acceso.  
+I. Requisitos Funcionales  
+1. Autenticación y Autorización  
+RF-01: El sistema debe tener un  mecanismo de login que autentique al usuario mediante 
+nombre de usuario y contraseña.  
+RF-02: Debe existir dos roles de usuario:  
+Usuario Colaborador: Puede ver estudios, editar sus propias entradas en los estudios 
+asignados, generar reportes básicos y gest ionar recomendaciones asignadas.  
+Usuario Administrador: Tiene todos los privilegios del colaborador más la capacidad de 
+crear/editar/eliminar estudios, usuarios, plantillas, matrices de riesgo, configurar permisos y 
+realizar operaciones de mantenimiento.  
+RF-03: El sistema debe registrar el inicio y cierre de sesión de cada usuario  con verificación de 
+token de sesión . 
+2. Gestión de Estudios  
+RF-04: Un estudio debe contener información administrativa básica (Nombre del proyecto, 
+Empresa, Ubicación, Objetivos, Alcance, Duración, Equipo de trabajo, Documentos de 
+referencia (Excel o pdf) ). 
+RF-05: Cada estudio debe estar asociado a una plantilla que define su estructura (hojas, 
+columnas, campos, metodología).  
+RF-06: El sistema debe permitir crear nuevos estudios de sde cero o clonarlos desde una 
+plantilla existente (plantilla Excel) . 
+RF-07: El sistema debe permitir importar estudios desde archivos externos (formato propio o 
+Excel ). 
+RF-08: El sistema debe permitir exportar estudios completos a formatos como PDF, Word,  
+Excel y XML.  
+3. Metodologías de Análisis de Riesgos  
+3.1. HAZOP Methodology (Guide Word HAZOP)  
+RF-09: El sistema debe permitir definir nodos (equipos, líneas, sistemas) con sus parámetros de 
+diseño (presión, temperatura, flujo, etc.) y dibujos asociados.  
+
+RF-10: Para cada nodo, el sistema debe permitir aplicar palabras guía (No, Más, Menos, 
+Inverso, Otro que, Antes/Después) a los parámetros para generar desviaciones (Ej emplo : "Flujo 
+Alto", "Temperatura Baja" , etc.). 
+Desviación  Palabra Guía  Parámetro  
+No flujo  No Flujo  
+Menos flujo  Menos  Flujo  
+Flujo mal direccionado  Otro  Flujo  
+Más flujo  Más  Flujo  
+Flujo inverso  Inverso  Flujo  
+Más presión  Más  Presión  
+Menos presión  Menos  Presión  
+Más temperatura  Más  Temperatura  
+Menos temperatura  Menos  Temperatura  
+Más nivel  Más  Nivel  
+Menos nivel  Menos  Nivel  
+Otra composición  Otra  Composición  
+Pérdida de Contención 
+(derrame)  - - 
+Pérdida de Servicios  Pérdida  Servicio  
+ 
+RF-11: Para cada desviación, el sistema debe permitir registrar:  
+Causas Potenciales: Listas de posibles causas.  
+Consecuencias: Descripción de los efectos.  
+Safeguards (Medidas de Seguridad): Medidas existentes para prevenir o mitigar.  
+Recomendaciones: Acciones propuestas si los safeguards son inadecuados.  
+Análisis de Riesgo: As ignación de Severidad y Frecuencia (usando la matriz de riesgo) para 
+calcular el Ranking de Riesgo (RR).  
+RF-12: El sistema debe soportar tanto la metodología Cause -by-Cause (CBC) como Deviation -
+by-Deviation (DBD).  
+3.2. What If Methodology  
+RF-13: El sistema  debe permitir definir subsistemas o áreas de estudio.  
+RF-14: Para cada subsistema, el sistema debe permitir formular preguntas "¿Qué pasaría si...?" 
+relacionadas con fallas, errores humanos, condiciones anormales, etc.  
+RF-15: Para cada pregunta "What If",  el sistema debe permitir registrar:  
+Consecuencias.  
+Safeguards.  
+Recomendaciones.  
+Análisis de Riesgo: Asignación de Severidad y Frecuencia (usando la matriz de riesgo) para 
+calcular el RR.  
+
+3.3. Checklist Methodology  
+RF-16: El sistema debe permitir crear y gestionar listas de verificación (checklists) 
+personalizadas, organizadas por categorías o temas.  
+RF-17: Para cada ítem de la checklist, el sistema debe permitir marcarlo como:  
+Aplicable / No Aplicable (N/A).  
+Cumplido / Incumplido.  
+RF-18: Si un íte m es incumplido, el sistema debe permitir registrar:  
+Consecuencias.  
+Safeguards.  
+Recomendaciones.  
+Análisis de Riesgo: Asignación de Severidad y Frecuencia (usando la matriz de riesgo) para 
+calcular el RR.  
+3.4. What If/Checklist Methodology  
+RF-19: El sistema  debe permitir combinar las funcionalidades de las metodologías What If y 
+Checklist.  
+RF-20: Debe permitir utilizar listas de verificación como punto de partida para generar 
+preguntas "What If" adicionales o viceversa.  
+RF-21: La captura de datos (Consecuenc ias, Safeguards, Recomendaciones, Análisis de Riesgo) 
+debe ser consistente con las metodologías individuales.  
+4. Gestión de Matrices de Riesgo  
+RF-22: El sistema debe permitir crear, editar y eliminar matrices de riesgo.  
+RF-23: Una matriz de riesgo debe def inirse por:  
+Eje X (Frecuencia): Con niveles (Ej: Común, Ha sucedido, Podría suceder, Raro que suceda, 
+Prácticamente imposible que suceda) y sus códigos (A, B, C, D, E).  
+Eje Y (Severidad): Con niveles (Ej: Catastrófico, Mortalidad, Permanente, Temporal, Men or) y 
+sus códigos (1, 2, 3, 4, 5).  
+Celdas de Riesgo: Cada intersección debe tener un código numérico único (1 a 25) y un color 
+asociado (Rojo, Amarillo, Verde) según el nivel de riesgo (Alto, Medio, Bajo).  
+RF-24: El sistema debe permitir importar matrices de riesgo desde archivos (CSV, excel ) y 
+modificarlos.  
+RF-25: El sistema debe permitir exportar matrices de riesgo a archivos (CSV, excel ). 
+RF-26: Las matrices deben ser reutilizables entre diferentes estudios y plantillas.  
+5. Gestión de Recomendaciones  
+RF-27: El sistema debe permitir registrar recomendaciones vinculadas a causas, consecuencias 
+o ítems de checklist.  
+
+RF-28: Cada recomendación debe incluir:  
+Descripción.  
+Responsable.  
+Estado (Pendiente, En Progreso, Completada, Cancelada).  
+Fechas (Inicio estimado, Fin estimado, Inicio real, Fin real).  
+Costo estimado.  
+Prioridad.  
+RF-29: El sistema debe permitir filtrar, ordenar y generar reportes de recomendaciones.  
+6. Gestión de Datos y Reportes  
+RF-30: El sistema debe permitir adjuntar archivos (PDFs, imáge nes, documentos) a cualquier 
+campo o registro.  
+RF-31: El sistema debe permitir insertar diagramas vinculados (como P&ID) y mantener la 
+relación con los datos del estudio.  
+RF-32: El sistema debe generar reportes en formato PDF y Word  y Excel , incluyendo por tadas, 
+tablas de contenido, resúmenes ejecutivos y detalles de los análisis.  
+RF-33: El sistema debe permitir imprimir vistas específicas del estudio.  
+II. Requisitos No Funcionales  
+RNF-01 (Seguridad): Implementar autenticación robusta, autorización basada e n roles y cifrado 
+de contraseñas. Los datos sensibles deben estar protegidos.  
+RNF-02 (Usabilidad): Interfaz intuitiva y similar a PHA -Pro, con navegación fácil y ayuda 
+contextual.  
+RNF-03 (Rendimiento): El sistema debe responder rápidamente incluso con estu dios grandes 
+(miles de registros).  
+RNF-04 (Fiabilidad): Mecanismos de respaldo automático y recuperación ante fallos.  
+RNF-05 (Escalabilidad): Arquitectura que permita escalar horizontalmente para soportar más 
+usuarios y estudios.  
+RNF-06 (Compatibilidad): F uncionar en navegadores modernos (Chrome, Firefox, Edge).  
+III. Arquitectura y Tecnologías  
+Backend  Python 3.x (FastAPI)  
+Frontend  React 18+ (c/ TypeScript, Redux, Material UI)  
+Base de Datos  MySQL 8.0+  
+
+Servidor Web  Uvicorn (servidor ASGI para FastAPI)  Ojo en PC LOCAL  
+API RESTful API (JSON)  
+Autenticación  JWT (JSON Web Tokens)  
+ 
+IV. Modelo de Base de Datos (MySQL)  
+Adjunto en archivo .txt.  
+V. Notas Adicionales  
+Relaciones: Las tablas están diseñadas con relaciones clave foránea (FOREIGN KEY) para 
+mantener la integridad referencial.  
+Flexibilidad: La tabla process_analysis es la más importante. Puede ser utilizada por todas las 
+metodologías, dependiendo de qué campos estén llenos (deviation_id, what_if_question, 
+checklist_item_id).  
+Matriz de Rie sgo: La tabla risk_matrix_cells permite definir exactamente la matriz que 
+muestras en tu imagen (con códigos 1 -25 y colores Rojo/Amarillo/Verde).  
+Import/Export: Las funcionalidades de importación/exportación ( xls, CSV) se implementan en 
+el backend ( python ) y se exponen a través de la API.  
+React Frontend: La interfaz de usuario debe replicar las pestañas y hojas de PHA -Pro 
+(Administración, Nodos, Desviaciones, Hoja de Análisis, Recomendaciones, Matriz de Riesgo, 
+etc.).  
+1. Backend (Python con FastAPI )  
+FastA PI es conocido por su velocidad (gracias a Starlette y Pydantic) y su generación 
+automática de documentación interactiva (Swagger UI / ReDoc).  
+2. Librerías de Python para Manejo de Documentos  
+El manejo de documentos se hará en el backend de Python, donde g enerarás o 
+leerás los archivos. Estas son las librerías recomendadas:  
+Formato   Librería(s) Recomendada(s)  Uso 
+Excel  pandas  y openpyxl  pandas  es extremadamente potente para la 
+manipulación y análisis de datos (lectura/escritura 
+eficiente de datos tabulares).  openpyxl  permite una 
+manipulación más directa de las celdas, estilos y 
+plantillas de  Excel.  
+
+Word  python -docx  Esta es la librería estándar para crear, leer y actualizar 
+archivos  .docx . Es ideal para rellenar plantillas con 
+datos de tu base de d atos MySQL, como los 
+resultados de un análisis PHA.  
+PDF ReportLab  y pypdf  (o PyPDF2 ) ReportLab  es excelente para  generar  PDFs 
+complejos y dinámicos desde cero, lo cual es útil para 
+informes formales de PHA.  pypdf  se utiliza 
+para  leer,  dividir, fusionar o añadir marcas de agua a 
+PDFs existentes.  
+3. Frontend (React)  
+React se encargará de todo lo que el usuario ve y con lo que interactúa.   
+Herramientas Necesarias:  
+• Vite : Para inicializar el proyecto de React.  Vite  es generalmente más 
+rápido y recomendado hoy en día.  
+• axios  o fetch : Para realizar peticiones HTTP (GET, POST, etc.) a la API 
+de FastAPI.  
+• react -router -dom: Para manejar las diferentes rutas y páginas de la 
+interfaz (ej.  /login , /pha-list , /create-report ). 
+• Librerías de UI (Opcional):  Material  UI (MUI),  Ant Design  o Chakra 
+UI para acelerar el diseño.   
+ 
+4. Base de Datos (MySQL)  
+MySQL  para  la interacción con la base de datos para almacenar toda la 
+información estructurada de los análisis PHA (peligros, salvaguardas, 
+recomendaciones, etc.).   
+RESULTADOS ESPERADOS  
+Frecuente El sistema debe ser capaz generar reportar el siguiente informe:  
+ 
+
+
+ 
+ 
