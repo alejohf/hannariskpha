@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite --port 5500",
+    "dev": "start-frontend.bat",
+    "dev:direct": "vite --port 5501",
     "build": "vite build",
     "preview": "vite preview"
   },
