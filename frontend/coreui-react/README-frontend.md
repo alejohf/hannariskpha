@@ -34,6 +34,33 @@ El script `start-frontend.bat` automáticamente:
 - **Login**: `http://localhost:5501/login`
 - **Dashboard**: `http://localhost:5501/dashboard` (requiere autenticación)
 
+## 📱 Responsividad
+
+El dashboard está completamente optimizado para todos los dispositivos:
+
+### 🖥️ **Desktop (1024px+)**
+- Layout completo con 4 columnas de KPIs
+- Grid principal 2fr-1fr para contenido y gráficos
+- Navegación completa y elementos interactivos
+
+### 📱 **Tablet (768px-1024px)**
+- Grid principal se convierte en columna única
+- Grid secundario mantiene 2 columnas
+- Elementos optimizados para touch
+
+### 📱 **Mobile (360px-768px)**
+- Layout de columna única centrado
+- KPIs en fila única o columna según el espacio
+- Fuentes y elementos escalables automáticamente
+- Navegación optimizada para pantallas táctiles
+
+### 🎨 **Características Responsive**
+- **CSS Grid** adaptable con breakpoints inteligentes
+- **Media queries** para 5 tamaños de pantalla diferentes
+- **Estados de carga y error** responsivos
+- **Componentes KpiCard** con hover effects y colores temáticos
+- **Tipografía escalable** para legibilidad en todos los dispositivos
+
 ## 🔑 Credenciales de Prueba
 
 - **Usuario**: `admin`
