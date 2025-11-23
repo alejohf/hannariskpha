@@ -1,0 +1,368 @@
+TODOS LOS ERRORES DEL PROYECTO appPHAV3
+
+==============================***=====================
+Timestamp: 2025-11-23 09:56:49
+Contexto: Endpoint: GET /api/health (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/health
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/health', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T09:56:49.388269'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 09:56:49 - hannariskpro - ERROR - Error en Endpoint: GET /api/health (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 09:56:49
+Contexto: Endpoint: GET /api/health (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/health
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/health', 'status_code': 200, 'process_time': '0.0035s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T09:56:49.391796'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 09:56:49 - hannariskpro - ERROR - Error en Endpoint: GET /api/health (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 09:57:05
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T09:57:05.142252'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 09:57:05 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 09:57:05
+Contexto: Endpoint: POST /api/auth/login (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'status_code': 200, 'process_time': '0.2787s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T09:57:05.420945'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 09:57:05 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 09:57:45
+Contexto: Endpoint: GET /api/dashboard/kpis (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/kpis
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/dashboard/kpis', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T09:57:45.261745'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 09:57:45 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/kpis (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 09:57:45
+Contexto: Endpoint: GET /api/dashboard/kpis (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/kpis
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/dashboard/kpis', 'status_code': 200, 'process_time': '0.0376s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T09:57:45.299335'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 09:57:45 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/kpis (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 09:58:12
+Contexto: Endpoint: GET /api/dashboard/risk_matrix (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/risk_matrix
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/dashboard/risk_matrix', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T09:58:12.399036'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 09:58:12 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/risk_matrix (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 09:58:12
+Contexto: Endpoint: GET /api/dashboard/risk_matrix (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/risk_matrix
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/dashboard/risk_matrix', 'status_code': 200, 'process_time': '0.0142s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T09:58:12.413212'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 09:58:12 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/risk_matrix (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:17:07
+Contexto: Endpoint: GET /api/dashboard/kpi (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/kpi
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/dashboard/kpi', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:17:07.982261'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:17:07 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/kpi (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:17:07
+Contexto: Endpoint: http://localhost:8092/api/dashboard/kpi (GET) - Status: 404
+Tipo de Error: BaseAPIException
+Mensaje: 
+Información Adicional:
+  endpoint: http://localhost:8092/api/dashboard/kpi
+  method: GET
+  status_code: 404
+  request_data: {'request_id': '7f6eb4a0-5fdb-4bfa-97de-191e77e7209a', 'error_code': 'HTTP_404', 'detail': 'Not Found'}
+Traceback:
+Traceback (most recent call last):
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 747, in __call__
+    await self.default(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 635, in not_found
+    raise HTTPException(status_code=404)
+starlette.exceptions.HTTPException
+
+==============================***=====================
+2025-11-23 10:17:07 - hannariskpro - ERROR - Error en Endpoint: http://localhost:8092/api/dashboard/kpi (GET) - Status: 404: BaseAPIException - 
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:17:07
+Contexto: Endpoint: GET /api/dashboard/kpi (RESPONSE) - Status: 404
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/kpi
+  method: RESPONSE
+  status_code: 404
+  request_data: {'method': 'GET', 'path': '/api/dashboard/kpi', 'status_code': 404, 'process_time': '0.0061s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:17:07.988334'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:17:07 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/kpi (RESPONSE) - Status: 404: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:17:25
+Contexto: Endpoint: GET /api/dashboard/kpis (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/kpis
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/dashboard/kpis', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:17:25.856352'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:17:25 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/kpis (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:17:25
+Contexto: Endpoint: http://localhost:8092/api/dashboard/kpis (GET) - Status: 401
+Tipo de Error: BaseAPIException
+Mensaje: 
+Información Adicional:
+  endpoint: http://localhost:8092/api/dashboard/kpis
+  method: GET
+  status_code: 401
+  request_data: {'request_id': '0e196df5-72da-46b2-b24d-68f6df2e7da0', 'error_code': 'FASTAPI_401', 'detail': 'Se requiere autenticación'}
+Traceback:
+Traceback (most recent call last):
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 68, in __call__
+    await self.app(scope, receive, sender)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 20, in __call__
+    raise e
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 17, in __call__
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 718, in __call__
+    await route.handle(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\routing.py", line 66, in app
+    response = await func(request)
+               ^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 273, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\fastapi\routing.py", line 192, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\starlette\concurrency.py", line 41, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func, *args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\anyio\to_thread.py", line 56, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2485, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\DEVFULLAPP\appPHAV3\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 976, in run
+    result = context.run(func, *args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\DEVFULLAPP\appPHAV3\backend\main.py", line 1743, in dashboard_kpis
+    raise HTTPException(status_code=401, detail='Se requiere autenticación')
+fastapi.exceptions.HTTPException
+
+==============================***=====================
+2025-11-23 10:17:25 - hannariskpro - ERROR - Error en Endpoint: http://localhost:8092/api/dashboard/kpis (GET) - Status: 401: BaseAPIException - 
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:17:25
+Contexto: Endpoint: GET /api/dashboard/kpis (RESPONSE) - Status: 401
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/kpis
+  method: RESPONSE
+  status_code: 401
+  request_data: {'method': 'GET', 'path': '/api/dashboard/kpis', 'status_code': 401, 'process_time': '0.0126s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:17:25.868981'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:17:25 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/kpis (RESPONSE) - Status: 401: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:17:51
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:17:51.723853'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:17:51 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:19:26
+Contexto: Endpoint: POST /api/auth/login (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:19:26.410881'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:19:26 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:19:26
+Contexto: Endpoint: POST /api/auth/login (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: POST /api/auth/login
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'POST', 'path': '/api/auth/login', 'status_code': 200, 'process_time': '0.1263s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:19:26.537193'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:19:26 - hannariskpro - ERROR - Error en Endpoint: POST /api/auth/login (RESPONSE) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:19:50
+Contexto: Endpoint: GET /api/dashboard/kpis (REQUEST) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/kpis
+  method: REQUEST
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/dashboard/kpis', 'user_agent': 'curl/8.16.0', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:19:50.629801'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:19:50 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/kpis (REQUEST) - Status: 200: NoneType - None
+
+
+==============================***=====================
+Timestamp: 2025-11-23 10:19:50
+Contexto: Endpoint: GET /api/dashboard/kpis (RESPONSE) - Status: 200
+Tipo de Error: NoneType
+Mensaje: None
+Información Adicional:
+  endpoint: GET /api/dashboard/kpis
+  method: RESPONSE
+  status_code: 200
+  request_data: {'method': 'GET', 'path': '/api/dashboard/kpis', 'status_code': 200, 'process_time': '0.0218s', 'ip_address': '127.0.0.1', 'timestamp': '2025-11-23T10:19:50.651593'}
+Traceback:
+NoneType: None
+
+==============================***=====================
+2025-11-23 10:19:50 - hannariskpro - ERROR - Error en Endpoint: GET /api/dashboard/kpis (RESPONSE) - Status: 200: NoneType - None
