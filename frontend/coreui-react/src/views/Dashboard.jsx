@@ -83,13 +83,15 @@ export default function Dashboard(){
   // Mostrar loading mientras se cargan los datos
   if (loading) {
     return (
-      <div style={{padding:16, textAlign:'center'}}>
-        <div style={{fontSize:'18px', marginBottom:'16px'}}>Cargando datos del dashboard...</div>
-        <div style={{display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:12}}>
+      <div className="dashboard-container">
+        <div className="dashboard-loading">
+          Cargando datos del dashboard...
+        </div>
+        <div className="dashboard-kpis">
           <KpiCard title="Total Estudios" value="..." />
-          <KpiCard title="Riesgos Identificados" value="..." color="#d9534f" />
-          <KpiCard title="Acciones Abiertas" value="..." color="#f0ad4e" />
-          <KpiCard title="Riesgos Críticos" value="..." color="#c62828" />
+          <KpiCard title="Riesgos Identificados" value="..." />
+          <KpiCard title="Acciones Abiertas" value="..." />
+          <KpiCard title="Riesgos Críticos" value="..." />
         </div>
       </div>
     )
@@ -98,25 +100,27 @@ export default function Dashboard(){
   // Mostrar error si hay problemas de autenticación o carga
   if (error) {
     return (
-      <div style={{padding:16, textAlign:'center', color:'#d9534f'}}>
-        <div style={{fontSize:'18px', marginBottom:'16px'}}>⚠️ {error}</div>
-        <div style={{fontSize:'14px', color:'#666'}}>
-          Asegúrate de estar logueado para ver los datos del dashboard.
+      <div className="dashboard-container">
+        <div className="dashboard-error">
+          <div style={{fontSize:'18px', marginBottom:'16px'}}>⚠️ {error}</div>
+          <div style={{fontSize:'14px', color:'#666'}}>
+            Asegúrate de estar logueado para ver los datos del dashboard.
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div style={{padding:16}}>
-      <div style={{display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:12}}>
+    <div className="dashboard-container">
+      <div className="dashboard-kpis">
         <KpiCard title="Total Estudios" value={kpis?.total_estudios ?? '0'} />
-        <KpiCard title="Riesgos Identificados" value={kpis?.riesgos_identificados ?? '0'} color="#d9534f" />
-        <KpiCard title="Acciones Abiertas" value={kpis?.acciones_abiertas ?? '0'} color="#f0ad4e" />
-        <KpiCard title="Riesgos Críticos" value={kpis?.riesgos_criticos ?? '0'} color="#c62828" />
+        <KpiCard title="Riesgos Identificados" value={kpis?.riesgos_identificados ?? '0'} />
+        <KpiCard title="Acciones Abiertas" value={kpis?.acciones_abiertas ?? '0'} />
+        <KpiCard title="Riesgos Críticos" value={kpis?.riesgos_criticos ?? '0'} />
       </div>
 
-      <div style={{display:'grid', gridTemplateColumns:'2fr 1fr', gap:12}}>
+      <div className="dashboard-main-grid">
         <RiskMatrix points={matrixPoints} onPointClick={(p)=>{ console.log('drill', p) }} />
 
         <div style={{display:'flex', flexDirection:'column', gap:12}}>
@@ -125,12 +129,12 @@ export default function Dashboard(){
         </div>
       </div>
 
-      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginTop:12}}>
+      <div className="dashboard-secondary-grid">
         <ActionsTable rows={actions} />
         <ActivityFeed items={activity} />
       </div>
 
-      <div style={{marginTop:12}}>
+      <div className="dashboard-bottom-section">
         <TrendsLine series={trends} />
       </div>
     </div>
