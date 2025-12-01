@@ -3,17 +3,117 @@ import time
 from typing import Optional
 from pathlib import Path
 import secrets
+from datetime import datetime, timedelta
 
 import mysql.connector
-from fastapi import FastAPI, HTTPException, Depends, Header
+from fastapi import FastAPI, HTTPException, Depends, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware import Middleware
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from pydantic import BaseModel
 
 from . import auth as auth_utils
+from . import exceptions
+from . import exception_handlers
+from . import validations
+from . import logger
 import sys
 from pathlib import Path
 
-app = FastAPI(title="Hanna RiskPro - Backend con Auth")
+# Configurar rate limiting
+limiter = Limiter(key_func=get_remote_address)
+
+app = FastAPI(
+    title="Hanna RiskPro - Backend con Auth",
+    description="API para gestión de riesgos industriales con autenticación y seguridad mejorada",
+    version="2.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
+
+# Añadir manejadores de excepciones globales
+exception_handlers.add_exception_handlers(app)
+
+# Manejador para rate limiting
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_exception_handler(request: Request, exc: RateLimitExceeded):
+    return HTTPException(
+        status_code=429,
+        detail={
+            "error": "Rate limit exceeded",
+            "message": "Has excedido el límite de solicitudes. Por favor, espera antes de intentar de nuevo.",
+            "retry_after": exc.wait_time
+        }
+    )
+
+# Configuración de seguridad
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    
+    # Añadir cabeceras de seguridad
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' http://localhost:3000 http://localhost:8080 http://localhost:5173 http://localhost:4173"
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+    
+    return response
+
+# Middleware para logging de solicitudes
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    # Excluir completamente el endpoint de login del logging para evitar problemas
+    if request.url.path == "/api/auth/login":
+        response = await call_next(request)
+        return response
+
+    start_time = time.time()
+
+    # Log de solicitud entrante
+    logger.log_api_error(
+        f"{request.method} {request.url.path}",
+        "REQUEST",
+        200,
+        None,
+        {
+            "method": request.method,
+            "path": request.url.path,
+            "user_agent": request.headers.get("user-agent"),
+            "ip_address": request.client.host,
+            "timestamp": datetime.now().isoformat()
+        }
+    )
+
+    response = await call_next(request)
+
+    # Log de respuesta
+    process_time = time.time() - start_time
+    logger.log_api_error(
+        f"{request.method} {request.url.path}",
+        "RESPONSE",
+        response.status_code,
+        None,
+        {
+            "method": request.method,
+            "path": request.url.path,
+            "status_code": response.status_code,
+            "process_time": f"{process_time:.4f}s",
+            "ip_address": request.client.host,
+            "timestamp": datetime.now().isoformat()
+        }
+    )
+
+    return response
 
 DB_HOST = os.getenv('DB_HOST', '127.0.0.1')
 DB_PORT = int(os.getenv('DB_PORT', '3306'))
@@ -37,21 +137,33 @@ def get_connection(database=None):
     return mysql.connector.connect(**cfg)
 
 
-# Permitir CORS para el frontend local (ajustar en producción)
+# Configuración de seguridad mejorada
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+
+# Permitir CORS para todos los orígenes en desarrollo
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Permitir todos los orígenes en desarrollo
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Permitir todos los métodos
+    allow_headers=["*"],  # Permitir todos los headers
+    expose_headers=["*"],
+    max_age=600,
 )
 
+# Añadir middleware de host confiable para prevenir Host Header Injection
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=["localhost", "127.0.0.1", "[::1]"]
+)
 
-class UserCreate(BaseModel):
-    username: str
-    password: str
+# Añadir compresión Gzip para mejorar el rendimiento
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+
+class UserCreate(validations.UserCreate):
     nombre_completo: Optional[str] = None
-    email: Optional[str] = None
     rol: Optional[str] = 'Colaborador'
 
 
@@ -82,24 +194,24 @@ def get_user_by_username(username: str):
 
 def get_current_user(authorization: Optional[str] = Header(None)):
     if not authorization:
-        raise HTTPException(status_code=401, detail='Falta cabecera Authorization')
+        raise exceptions.AuthenticationError('Falta cabecera Authorization', 'MISSING_AUTH_HEADER')
     parts = authorization.split()
     if len(parts) != 2 or parts[0].lower() != 'bearer':
-        raise HTTPException(status_code=401, detail='Formato de token inválido')
+        raise exceptions.AuthenticationError('Formato de token inválido', 'INVALID_TOKEN_FORMAT')
     token = parts[1]
     try:
         payload = auth_utils.decode_token(token)
     except Exception as e:
-        raise HTTPException(status_code=401, detail='Token inválido o expirado')
+        raise exceptions.AuthenticationError('Token inválido o expirado', 'INVALID_TOKEN')
     user = get_user_by_id(payload.get('user_id'))
     if not user:
-        raise HTTPException(status_code=404, detail='Usuario no encontrado')
+        raise exceptions.NotFoundError('Usuario', payload.get('user_id'))
     return user
 
 
 def require_admin(user=Depends(get_current_user)):
     if user.get('rol') != 'Administrador':
-        raise HTTPException(status_code=403, detail='Se requieren privilegios de administrador')
+        raise exceptions.AuthorizationError('Se requieren privilegios de administrador', 'INSUFFICIENT_PRIVILEGES')
     return user
 
 
@@ -133,7 +245,7 @@ def run_seed(payload: dict, admin=Depends(require_admin)):
     Request body (json) puede incluir: { "reset": true, "count": 30 }
     """
     if os.getenv('SEED_ALLOWED', '0') != '1':
-        raise HTTPException(status_code=403, detail='Seed no permitido en este entorno')
+        raise exceptions.AuthorizationError('Seed no permitido en este entorno', 'SEED_NOT_ALLOWED')
     reset = bool(payload.get('reset'))
     count = int(payload.get('count') or 30)
     tables = payload.get('tables')
@@ -167,58 +279,78 @@ def register(user: UserCreate, current_admin: Optional[dict] = Depends(require_a
     """Registra un usuario. Si hay usuarios existentes, solo un Administrador puede crear nuevos usuarios.
     Si la base está vacía, este endpoint puede crear el primer usuario (útil para bootstrap).
     """
-    # Comprobar si existen usuarios
-    conn = get_connection(DB_NAME)
-    cur = conn.cursor()
-    cur.execute('SELECT COUNT(*) FROM usuarios')
-    (count,) = cur.fetchone()
-    if count > 0 and current_admin is None:
+    try:
+        # Comprobar si existen usuarios
+        conn = get_connection(DB_NAME)
+        cur = conn.cursor()
+        cur.execute('SELECT COUNT(*) FROM usuarios')
+        (count,) = cur.fetchone()
+        if count > 0 and current_admin is None:
+            cur.close()
+            conn.close()
+            logger.log_api_error('/api/auth/register', 'POST', 403, Exception('Solo administrador puede crear usuarios una vez inicializado'), {'user_data': user.dict()})
+            raise exceptions.AuthorizationError('Solo administrador puede crear usuarios una vez inicializado', 'USER_CREATION_RESTRICTED')
+
+        # buscar rol
+        cur.execute('SELECT id FROM roles WHERE nombre = %s', (user.rol,))
+        row = cur.fetchone()
+        rol_id = row[0] if row else None
+        if not rol_id:
+            # default a Colaborador
+            cur.execute('SELECT id FROM roles WHERE nombre = %s', ('Colaborador',))
+            r = cur.fetchone()
+            rol_id = r[0] if r else None
+
+        pw_hash = auth_utils.hash_password(user.password)
+        cur.execute('INSERT INTO usuarios (username, password_hash, nombre_completo, email, rol_id) VALUES (%s,%s,%s,%s,%s)',
+                    (user.username, pw_hash, user.nombre_completo, user.email, rol_id))
+        conn.commit()
+        new_id = cur.lastrowid
         cur.close()
         conn.close()
-        raise HTTPException(status_code=403, detail='Solo administrador puede crear usuarios una vez inicializado')
-
-    # buscar rol
-    cur.execute('SELECT id FROM roles WHERE nombre = %s', (user.rol,))
-    row = cur.fetchone()
-    rol_id = row[0] if row else None
-    if not rol_id:
-        # default a Colaborador
-        cur.execute('SELECT id FROM roles WHERE nombre = %s', ('Colaborador',))
-        r = cur.fetchone()
-        rol_id = r[0] if r else None
-
-    pw_hash = auth_utils.hash_password(user.password)
-    cur.execute('INSERT INTO usuarios (username, password_hash, nombre_completo, email, rol_id) VALUES (%s,%s,%s,%s,%s)',
-                (user.username, pw_hash, user.nombre_completo, user.email, rol_id))
-    conn.commit()
-    new_id = cur.lastrowid
-    cur.close()
-    conn.close()
-    return {'usuario_id': new_id}
+        return {'usuario_id': new_id}
+    except Exception as e:
+        logger.log_api_error('/api/auth/register', 'POST', 500, e, {'user_data': user.dict()})
+        raise
 
 
 @app.post('/api/auth/login', response_model=TokenResponse)
-def login(form: dict):
-    username = form.get('username')
-    password = form.get('password')
-    if not username or not password:
-        raise HTTPException(status_code=400, detail='username y password son requeridos')
-    user = get_user_by_username(username)
-    if not user:
-        raise HTTPException(status_code=401, detail='Credenciales inválidas')
-    if not auth_utils.verify_password(password, user.get('password_hash')):
-        raise HTTPException(status_code=401, detail='Credenciales inválidas')
-    token = auth_utils.create_access_token({'user_id': user['id'], 'username': user['username'], 'rol': user.get('rol')})
-    return {'access_token': token}
+async def login(request: Request):
+    try:
+        # Leer el cuerpo de la solicitud
+        body_bytes = await request.body()
+        body_str = body_bytes.decode('utf-8')
+        import json
+        form_data = json.loads(body_str)
+
+        username = form_data.get('username')
+        password = form_data.get('password')
+
+        if not username or not password:
+            raise exceptions.ValidationError('username y password son requeridos', 'credentials')
+
+        user = get_user_by_username(username)
+        if not user:
+            raise exceptions.AuthenticationError('Credenciales inválidas', 'INVALID_CREDENTIALS')
+        if not auth_utils.verify_password(password, user.get('password_hash')):
+            raise exceptions.AuthenticationError('Credenciales inválidas', 'INVALID_CREDENTIALS')
+        token = auth_utils.create_access_token({'user_id': user['id'], 'username': user['username'], 'rol': user.get('rol')})
+        return {'access_token': token}
+    except json.JSONDecodeError:
+        raise exceptions.ValidationError('Formato JSON inválido', 'invalid_json')
+    except Exception as e:
+        raise exceptions.AuthenticationError('Error en la autenticación', 'AUTH_ERROR')
 
 
 @app.get('/api/me')
-def me(user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def me(request: Request, user=Depends(get_current_user)):
     return {k: v for k, v in user.items() if k != 'password_hash'}
 
 
 @app.get('/api/estudios')
-async def listar_estudios():
+@limiter.limit("100/minute")
+async def listar_estudios(request: Request):
     try:
         conn = get_connection(DB_NAME)
         cursor = conn.cursor(dictionary=True)
@@ -228,13 +360,11 @@ async def listar_estudios():
         conn.close()
         return {'estudios': rows}
     except mysql.connector.Error as err:
-        raise HTTPException(status_code=500, detail=str(err))
+        raise exceptions.handle_mysql_database_error(err)
 
 
 # ---------- CRUD Estudios ----------
-class EstudioCreate(BaseModel):
-    nombre: str
-    empresa_id: Optional[int] = None
+class EstudioCreate(validations.StudyCreate):
     ubicacion: Optional[str] = None
     objetivos: Optional[str] = None
     alcance: Optional[str] = None
@@ -245,7 +375,8 @@ class EstudioCreate(BaseModel):
 
 
 @app.post('/api/estudios', response_model=dict)
-def crear_estudio(payload: EstudioCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def crear_estudio(request: Request, payload: EstudioCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -266,11 +397,12 @@ def crear_estudio(payload: EstudioCreate, user=Depends(get_current_user)):
                 f.write(tb)
         except Exception:
             pass
-        raise HTTPException(status_code=500, detail='Internal server error (see tmp_auditoria_error.log)')
+        raise exceptions.DatabaseError('Error al crear el estudio', 'ESTUDIO_CREATION_ERROR')
 
 
 @app.get('/api/estudios/{estudio_id}')
-def obtener_estudio(estudio_id: int, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def obtener_estudio(request: Request, estudio_id: int, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -279,14 +411,15 @@ def obtener_estudio(estudio_id: int, user=Depends(get_current_user)):
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Estudio no encontrado')
+            raise exceptions.NotFoundError('Estudio', str(estudio_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.put('/api/estudios/{estudio_id}')
-def actualizar_estudio(estudio_id: int, payload: EstudioCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def actualizar_estudio(request: Request, estudio_id: int, payload: EstudioCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -299,11 +432,12 @@ def actualizar_estudio(estudio_id: int, payload: EstudioCreate, user=Depends(get
         conn.close()
         return {'updated': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.delete('/api/estudios/{estudio_id}')
-def eliminar_estudio(estudio_id: int, admin=Depends(require_admin)):
+@limiter.limit("10/minute")
+def eliminar_estudio(request: Request, estudio_id: int, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -313,21 +447,18 @@ def eliminar_estudio(estudio_id: int, admin=Depends(require_admin)):
         conn.close()
         return {'deleted': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 # ---------- CRUD Nodos ----------
-class NodoCreate(BaseModel):
-    estudio_id: int
-    subsistema_id: Optional[int] = None
-    nombre: str
-    tipo: Optional[str] = None
+class NodoCreate(validations.NodeCreate):
     parametros: Optional[dict] = None
     dibujo: Optional[str] = None
 
 
 @app.post('/api/nodos', response_model=dict)
-def crear_nodo(payload: NodoCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def crear_nodo(request: Request, payload: NodoCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -339,11 +470,12 @@ def crear_nodo(payload: NodoCreate, user=Depends(get_current_user)):
         conn.close()
         return {'nodo_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/nodos')
-def listar_nodos(estudio_id: Optional[int] = None, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_nodos(request: Request, estudio_id: Optional[int] = None, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -356,11 +488,12 @@ def listar_nodos(estudio_id: Optional[int] = None, user=Depends(get_current_user
         conn.close()
         return {'nodos': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/nodos/{nodo_id}')
-def obtener_nodo(nodo_id: int, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def obtener_nodo(request: Request, nodo_id: int, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -369,14 +502,15 @@ def obtener_nodo(nodo_id: int, user=Depends(get_current_user)):
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Nodo no encontrado')
+            raise exceptions.NotFoundError('Nodo', str(nodo_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.put('/api/nodos/{nodo_id}')
-def actualizar_nodo(nodo_id: int, payload: NodoCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def actualizar_nodo(request: Request, nodo_id: int, payload: NodoCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -387,11 +521,12 @@ def actualizar_nodo(nodo_id: int, payload: NodoCreate, user=Depends(get_current_
         conn.close()
         return {'updated': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.delete('/api/nodos/{nodo_id}')
-def eliminar_nodo(nodo_id: int, admin=Depends(require_admin)):
+@limiter.limit("10/minute")
+def eliminar_nodo(request: Request, nodo_id: int, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -401,18 +536,14 @@ def eliminar_nodo(nodo_id: int, admin=Depends(require_admin)):
         conn.close()
         return {'deleted': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 # ---------- CRUD Analisis Proceso ----------
-class AnalisisCreate(BaseModel):
-    estudio_id: int
-    metodologia_id: int
-    nodo_id: Optional[int] = None
+class AnalisisCreate(validations.AnalysisCreate):
     desviacion_id: Optional[int] = None
     pregunta_whatif_id: Optional[int] = None
     checklist_item_id: Optional[int] = None
-    descripcion: Optional[str] = None
     causas: Optional[dict] = None
     consecuencias: Optional[dict] = None
     salvaguardas: Optional[dict] = None
@@ -423,7 +554,8 @@ class AnalisisCreate(BaseModel):
 
 
 @app.post('/api/analisis', response_model=dict)
-def crear_analisis(payload: AnalisisCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def crear_analisis(request: Request, payload: AnalisisCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -435,11 +567,12 @@ def crear_analisis(payload: AnalisisCreate, user=Depends(get_current_user)):
         conn.close()
         return {'analisis_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/analisis')
-def listar_analisis(estudio_id: Optional[int] = None, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_analisis(request: Request, estudio_id: Optional[int] = None, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -452,11 +585,12 @@ def listar_analisis(estudio_id: Optional[int] = None, user=Depends(get_current_u
         conn.close()
         return {'analisis': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/analisis/{analisis_id}')
-def obtener_analisis(analisis_id: int, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def obtener_analisis(request: Request, analisis_id: int, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -465,14 +599,15 @@ def obtener_analisis(analisis_id: int, user=Depends(get_current_user)):
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Análisis no encontrado')
+            raise exceptions.NotFoundError('Análisis', str(analisis_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.put('/api/analisis/{analisis_id}')
-def actualizar_analisis(analisis_id: int, payload: AnalisisCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def actualizar_analisis(request: Request, analisis_id: int, payload: AnalisisCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -483,11 +618,12 @@ def actualizar_analisis(analisis_id: int, payload: AnalisisCreate, user=Depends(
         conn.close()
         return {'updated': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.delete('/api/analisis/{analisis_id}')
-def eliminar_analisis(analisis_id: int, admin=Depends(require_admin)):
+@limiter.limit("10/minute")
+def eliminar_analisis(request: Request, analisis_id: int, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -497,22 +633,20 @@ def eliminar_analisis(analisis_id: int, admin=Depends(require_admin)):
         conn.close()
         return {'deleted': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 # ---------- CRUD Recomendaciones ----------
-class RecomendacionCreate(BaseModel):
-    estudio_id: int
+class RecomendacionCreate(validations.RecommendationCreate):
     origen_tipo: Optional[str] = None
     origen_id: Optional[int] = None
-    descripcion: str
     responsable_id: Optional[int] = None
-    costo_estimado: Optional[float] = None
     prioridad: Optional[int] = 3
 
 
 @app.post('/api/recomendaciones', response_model=dict)
-def crear_recomendacion(payload: RecomendacionCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def crear_recomendacion(request: Request, payload: RecomendacionCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -524,11 +658,12 @@ def crear_recomendacion(payload: RecomendacionCreate, user=Depends(get_current_u
         conn.close()
         return {'recomendacion_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/recomendaciones')
-def listar_recomendaciones(estudio_id: Optional[int] = None, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_recomendaciones(request: Request, estudio_id: Optional[int] = None, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -541,11 +676,12 @@ def listar_recomendaciones(estudio_id: Optional[int] = None, user=Depends(get_cu
         conn.close()
         return {'recomendaciones': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/recomendaciones/{rec_id}')
-def obtener_recomendacion(rec_id: int, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def obtener_recomendacion(request: Request, rec_id: int, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -554,14 +690,15 @@ def obtener_recomendacion(rec_id: int, user=Depends(get_current_user)):
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Recomendación no encontrada')
+            raise exceptions.NotFoundError('Recomendación', str(rec_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.put('/api/recomendaciones/{rec_id}')
-def actualizar_recomendacion(rec_id: int, payload: RecomendacionCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def actualizar_recomendacion(request: Request, rec_id: int, payload: RecomendacionCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -572,11 +709,12 @@ def actualizar_recomendacion(rec_id: int, payload: RecomendacionCreate, user=Dep
         conn.close()
         return {'updated': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.delete('/api/recomendaciones/{rec_id}')
-def eliminar_recomendacion(rec_id: int, admin=Depends(require_admin)):
+@limiter.limit("10/minute")
+def eliminar_recomendacion(request: Request, rec_id: int, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -586,7 +724,7 @@ def eliminar_recomendacion(rec_id: int, admin=Depends(require_admin)):
         conn.close()
         return {'deleted': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 # ---------- CRUD Adjuntos (archivos) ----------
@@ -597,7 +735,8 @@ UPLOAD_DIR.mkdir(exist_ok=True)
 
 
 @app.post('/api/adjuntos', response_model=dict)
-def subir_adjunto(estudio_id: Optional[int] = None, analisis_id: Optional[int] = None, file: UploadFile = File(...), user=Depends(get_current_user)):
+@limiter.limit("10/minute")
+def subir_adjunto(request: Request, estudio_id: Optional[int] = None, analisis_id: Optional[int] = None, file: UploadFile = File(...), user=Depends(get_current_user)):
     try:
         filename = f"{int(time.time())}_{secrets.token_hex(6)}_{file.filename}"
         dest = UPLOAD_DIR / filename
@@ -613,11 +752,12 @@ def subir_adjunto(estudio_id: Optional[int] = None, analisis_id: Optional[int] =
         conn.close()
         return {'adjunto_id': nid, 'ruta': str(dest)}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/adjuntos')
-def listar_adjuntos(estudio_id: Optional[int] = None, analisis_id: Optional[int] = None, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_adjuntos(request: Request, estudio_id: Optional[int] = None, analisis_id: Optional[int] = None, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -632,11 +772,12 @@ def listar_adjuntos(estudio_id: Optional[int] = None, analisis_id: Optional[int]
         conn.close()
         return {'adjuntos': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/adjuntos/{adj_id}')
-def obtener_adjunto(adj_id: int, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def obtener_adjunto(request: Request, adj_id: int, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -645,14 +786,15 @@ def obtener_adjunto(adj_id: int, user=Depends(get_current_user)):
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Adjunto no encontrado')
+            raise exceptions.NotFoundError('Adjunto', str(adj_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.delete('/api/adjuntos/{adj_id}')
-def eliminar_adjunto(adj_id: int, admin=Depends(require_admin)):
+@limiter.limit("5/minute")
+def eliminar_adjunto(request: Request, adj_id: int, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -672,19 +814,18 @@ def eliminar_adjunto(adj_id: int, admin=Depends(require_admin)):
         conn.close()
         return {'deleted': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
  # ---------- Otras entidades CRUD (empresas, plantillas, subsistemas, parametros, desviaciones, preguntas_whatif, checklist, salvaguardas, usuarios) ----------
 
-class EmpresaCreate(BaseModel):
-    nombre: str
+class EmpresaCreate(validations.CompanyCreate):
     ruc: Optional[str] = None
-    direccion: Optional[str] = None
 
 
 @app.post('/api/empresas')
-def crear_empresa(payload: EmpresaCreate, admin=Depends(require_admin)):
+@limiter.limit("10/minute")
+def crear_empresa(request: Request, payload: EmpresaCreate, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -695,11 +836,12 @@ def crear_empresa(payload: EmpresaCreate, admin=Depends(require_admin)):
         conn.close()
         return {'empresa_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/empresas')
-def listar_empresas(user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_empresas(request: Request, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -709,11 +851,12 @@ def listar_empresas(user=Depends(get_current_user)):
         conn.close()
         return {'empresas': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/empresas/{empresa_id}')
-def obtener_empresa(empresa_id: int, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def obtener_empresa(request: Request, empresa_id: int, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -722,14 +865,15 @@ def obtener_empresa(empresa_id: int, user=Depends(get_current_user)):
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Empresa no encontrada')
+            raise exceptions.NotFoundError('Empresa', str(empresa_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.put('/api/empresas/{empresa_id}')
-def actualizar_empresa(empresa_id: int, payload: EmpresaCreate, admin=Depends(require_admin)):
+@limiter.limit("10/minute")
+def actualizar_empresa(request: Request, empresa_id: int, payload: EmpresaCreate, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -739,11 +883,12 @@ def actualizar_empresa(empresa_id: int, payload: EmpresaCreate, admin=Depends(re
         conn.close()
         return {'updated': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.delete('/api/empresas/{empresa_id}')
-def eliminar_empresa(empresa_id: int, admin=Depends(require_admin)):
+@limiter.limit("5/minute")
+def eliminar_empresa(request: Request, empresa_id: int, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -753,17 +898,16 @@ def eliminar_empresa(empresa_id: int, admin=Depends(require_admin)):
         conn.close()
         return {'deleted': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
-class PlantillaCreate(BaseModel):
-    nombre: str
-    descripcion: Optional[str] = None
-    contenido: Optional[dict] = None
+class PlantillaCreate(validations.TemplateCreate):
+    pass
 
 
 @app.post('/api/plantillas')
-def crear_plantilla(payload: PlantillaCreate, admin=Depends(require_admin)):
+@limiter.limit("10/minute")
+def crear_plantilla(request: Request, payload: PlantillaCreate, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -774,11 +918,12 @@ def crear_plantilla(payload: PlantillaCreate, admin=Depends(require_admin)):
         conn.close()
         return {'plantilla_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/plantillas')
-def listar_plantillas(user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_plantillas(request: Request, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -788,11 +933,12 @@ def listar_plantillas(user=Depends(get_current_user)):
         conn.close()
         return {'plantillas': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/plantillas/{plantilla_id}')
-def obtener_plantilla(plantilla_id: int, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def obtener_plantilla(request: Request, plantilla_id: int, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -801,14 +947,15 @@ def obtener_plantilla(plantilla_id: int, user=Depends(get_current_user)):
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Plantilla no encontrada')
+            raise exceptions.NotFoundError('Plantilla', str(plantilla_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.put('/api/plantillas/{plantilla_id}')
-def actualizar_plantilla(plantilla_id: int, payload: PlantillaCreate, admin=Depends(require_admin)):
+@limiter.limit("10/minute")
+def actualizar_plantilla(request: Request, plantilla_id: int, payload: PlantillaCreate, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -818,11 +965,12 @@ def actualizar_plantilla(plantilla_id: int, payload: PlantillaCreate, admin=Depe
         conn.close()
         return {'updated': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.delete('/api/plantillas/{plantilla_id}')
-def eliminar_plantilla(plantilla_id: int, admin=Depends(require_admin)):
+@limiter.limit("5/minute")
+def eliminar_plantilla(request: Request, plantilla_id: int, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -832,17 +980,16 @@ def eliminar_plantilla(plantilla_id: int, admin=Depends(require_admin)):
         conn.close()
         return {'deleted': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
-class SubsistemaCreate(BaseModel):
-    estudio_id: int
-    nombre: str
-    descripcion: Optional[str] = None
+class SubsistemaCreate(validations.SubsystemCreate):
+    pass
 
 
 @app.post('/api/subsistemas')
-def crear_subsistema(payload: SubsistemaCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def crear_subsistema(request: Request, payload: SubsistemaCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -853,11 +1000,12 @@ def crear_subsistema(payload: SubsistemaCreate, user=Depends(get_current_user)):
         conn.close()
         return {'subsistema_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/subsistemas')
-def listar_subsistemas(estudio_id: Optional[int] = None, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_subsistemas(request: Request, estudio_id: Optional[int] = None, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -870,18 +1018,16 @@ def listar_subsistemas(estudio_id: Optional[int] = None, user=Depends(get_curren
         conn.close()
         return {'subsistemas': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
-class ParametroCreate(BaseModel):
-    nodo_id: int
-    nombre: str
-    valor: Optional[str] = None
-    unidad: Optional[str] = None
+class ParametroCreate(validations.ParameterCreate):
+    pass
 
 
 @app.post('/api/parametros')
-def crear_parametro(payload: ParametroCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def crear_parametro(request: Request, payload: ParametroCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -892,11 +1038,12 @@ def crear_parametro(payload: ParametroCreate, user=Depends(get_current_user)):
         conn.close()
         return {'parametro_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/parametros')
-def listar_parametros(nodo_id: Optional[int] = None, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_parametros(request: Request, nodo_id: Optional[int] = None, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -909,18 +1056,16 @@ def listar_parametros(nodo_id: Optional[int] = None, user=Depends(get_current_us
         conn.close()
         return {'parametros': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
-class DesviacionCreate(BaseModel):
-    nodo_id: int
-    palabra_guia: Optional[str] = None
-    parametro: Optional[str] = None
-    descripcion: Optional[str] = None
+class DesviacionCreate(validations.DeviationCreate):
+    pass
 
 
 @app.post('/api/desviaciones')
-def crear_desviacion(payload: DesviacionCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def crear_desviacion(request: Request, payload: DesviacionCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -931,11 +1076,12 @@ def crear_desviacion(payload: DesviacionCreate, user=Depends(get_current_user)):
         conn.close()
         return {'desviacion_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/desviaciones')
-def listar_desviaciones(nodo_id: Optional[int] = None, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_desviaciones(request: Request, nodo_id: Optional[int] = None, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -948,17 +1094,16 @@ def listar_desviaciones(nodo_id: Optional[int] = None, user=Depends(get_current_
         conn.close()
         return {'desviaciones': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
-class PreguntaWhatIfCreate(BaseModel):
-    subsistema_id: Optional[int] = None
-    pregunta: str
-    descripcion: Optional[str] = None
+class PreguntaWhatIfCreate(validations.WhatIfQuestionCreate):
+    pass
 
 
 @app.post('/api/preguntas_whatif')
-def crear_pregunta(payload: PreguntaWhatIfCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def crear_pregunta(request: Request, payload: PreguntaWhatIfCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -969,11 +1114,12 @@ def crear_pregunta(payload: PreguntaWhatIfCreate, user=Depends(get_current_user)
         conn.close()
         return {'pregunta_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/preguntas_whatif')
-def listar_preguntas_whatif(subsistema_id: Optional[int] = None, user=Depends(get_optional_current_user)):
+@limiter.limit("100/minute")
+def listar_preguntas_whatif(request: Request, subsistema_id: Optional[int] = None, user=Depends(get_optional_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -986,11 +1132,12 @@ def listar_preguntas_whatif(subsistema_id: Optional[int] = None, user=Depends(ge
         conn.close()
         return {'preguntas_whatif': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/preguntas_whatif/{preg_id}')
-def obtener_pregunta_whatif(preg_id: int, user=Depends(get_optional_current_user)):
+@limiter.limit("100/minute")
+def obtener_pregunta_whatif(request: Request, preg_id: int, user=Depends(get_optional_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -999,22 +1146,19 @@ def obtener_pregunta_whatif(preg_id: int, user=Depends(get_optional_current_user
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Pregunta not found')
+            raise exceptions.NotFoundError('Pregunta WhatIf', str(preg_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
-class ChecklistItemCreate(BaseModel):
-    subsistema_id: Optional[int] = None
-    categoria: Optional[str] = None
-    item: str
-    aplicable: Optional[bool] = True
-    cumplido: Optional[bool] = False
+class ChecklistItemCreate(validations.ChecklistItemCreate):
+    pass
 
 
 @app.post('/api/checklist_items')
-def crear_checklist_item(payload: ChecklistItemCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def crear_checklist_item(request: Request, payload: ChecklistItemCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -1025,11 +1169,12 @@ def crear_checklist_item(payload: ChecklistItemCreate, user=Depends(get_current_
         conn.close()
         return {'checklist_item_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/checklist_items')
-def listar_checklist_items(subsistema_id: Optional[int] = None, user=Depends(get_optional_current_user)):
+@limiter.limit("100/minute")
+def listar_checklist_items(request: Request, subsistema_id: Optional[int] = None, user=Depends(get_optional_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1042,11 +1187,12 @@ def listar_checklist_items(subsistema_id: Optional[int] = None, user=Depends(get
         conn.close()
         return {'checklist_items': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/checklist_items/{item_id}')
-def obtener_checklist_item(item_id: int, user=Depends(get_optional_current_user)):
+@limiter.limit("100/minute")
+def obtener_checklist_item(request: Request, item_id: int, user=Depends(get_optional_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1055,21 +1201,19 @@ def obtener_checklist_item(item_id: int, user=Depends(get_optional_current_user)
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Checklist item not found')
+            raise exceptions.NotFoundError('Checklist Item', str(item_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
-class SalvaguardaCreate(BaseModel):
-    estudio_id: Optional[int] = None
-    descripcion: str
-    tipo: Optional[str] = None
-    eficacia: Optional[str] = None
+class SalvaguardaCreate(validations.SafeguardCreate):
+    pass
 
 
 @app.post('/api/salvaguardas')
-def crear_salvaguarda(payload: SalvaguardaCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def crear_salvaguarda(request: Request, payload: SalvaguardaCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -1080,11 +1224,12 @@ def crear_salvaguarda(payload: SalvaguardaCreate, user=Depends(get_current_user)
         conn.close()
         return {'salvaguarda_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/salvaguardas')
-def listar_salvaguardas(estudio_id: Optional[int] = None, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_salvaguardas(request: Request, estudio_id: Optional[int] = None, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1097,11 +1242,12 @@ def listar_salvaguardas(estudio_id: Optional[int] = None, user=Depends(get_curre
         conn.close()
         return {'salvaguardas': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/salvaguardas/{salv_id}')
-def obtener_salvaguarda(salv_id: int, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def obtener_salvaguarda(request: Request, salv_id: int, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1110,21 +1256,19 @@ def obtener_salvaguarda(salv_id: int, user=Depends(get_current_user)):
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Salvaguarda no encontrada')
+            raise exceptions.NotFoundError('Salvaguarda', str(salv_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
-class UsuarioUpdate(BaseModel):
-    nombre_completo: Optional[str] = None
-    email: Optional[str] = None
-    activo: Optional[bool] = True
-    rol: Optional[str] = None
+class UsuarioUpdate(validations.UserUpdate):
+    pass
 
 
 @app.get('/api/usuarios')
-def listar_usuarios(admin=Depends(require_admin)):
+@limiter.limit("100/minute")
+def listar_usuarios(request: Request, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1134,11 +1278,11 @@ def listar_usuarios(admin=Depends(require_admin)):
         conn.close()
         return {'usuarios': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.put('/api/usuarios/{user_id}')
-def actualizar_usuario(user_id: int, payload: UsuarioUpdate, admin=Depends(require_admin)):
+def actualizar_usuario(request: Request, user_id: int, payload: UsuarioUpdate, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -1154,11 +1298,11 @@ def actualizar_usuario(user_id: int, payload: UsuarioUpdate, admin=Depends(requi
         conn.close()
         return {'updated': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.delete('/api/usuarios/{user_id}')
-def eliminar_usuario(user_id: int, admin=Depends(require_admin)):
+def eliminar_usuario(request: Request, user_id: int, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -1168,17 +1312,17 @@ def eliminar_usuario(user_id: int, admin=Depends(require_admin)):
         conn.close()
         return {'deleted': True}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 # ---------- CRUD Metodologias ----------
-class MetodologiaCreate(BaseModel):
-    nombre: str
-    descripcion: Optional[str] = None
+class MetodologiaCreate(validations.MethodologyCreate):
+    pass
 
 
 @app.post('/api/metodologias')
-def crear_metodologia(payload: MetodologiaCreate, admin=Depends(require_admin)):
+@limiter.limit("10/minute")
+def crear_metodologia(request: Request, payload: MetodologiaCreate, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -1189,11 +1333,12 @@ def crear_metodologia(payload: MetodologiaCreate, admin=Depends(require_admin)):
         conn.close()
         return {'metodologia_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/metodologias')
-def listar_metodologias(user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_metodologias(request: Request, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1203,17 +1348,17 @@ def listar_metodologias(user=Depends(get_current_user)):
         conn.close()
         return {'metodologias': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 # ---------- CRUD Roles ----------
-class RoleCreate(BaseModel):
-    nombre: str
-    descripcion: Optional[str] = None
+class RoleCreate(validations.RoleCreate):
+    pass
 
 
 @app.post('/api/roles')
-def crear_rol(payload: RoleCreate, admin=Depends(require_admin)):
+@limiter.limit("10/minute")
+def crear_rol(request: Request, payload: RoleCreate, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -1224,11 +1369,12 @@ def crear_rol(payload: RoleCreate, admin=Depends(require_admin)):
         conn.close()
         return {'role_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/roles')
-def listar_roles(user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_roles(request: Request, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1238,18 +1384,17 @@ def listar_roles(user=Depends(get_current_user)):
         conn.close()
         return {'roles': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 # ---------- CRUD Risk Matrices & Cells ----------
-class RiskMatrixCreate(BaseModel):
-    estudio_id: Optional[int] = None
-    nombre: str
-    descripcion: Optional[str] = None
+class RiskMatrixCreate(validations.RiskMatrixCreate):
+    pass
 
 
 @app.post('/api/risk_matrices')
-def crear_risk_matrix(payload: RiskMatrixCreate, user=Depends(get_current_user)):
+@limiter.limit("10/minute")
+def crear_risk_matrix(request: Request, payload: RiskMatrixCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -1260,19 +1405,16 @@ def crear_risk_matrix(payload: RiskMatrixCreate, user=Depends(get_current_user))
         conn.close()
         return {'risk_matrix_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
-class RiskMatrixCellCreate(BaseModel):
-    matrix_id: int
-    fila: int
-    columna: int
-    nivel: Optional[str] = None
-    codigo: Optional[str] = None
+class RiskMatrixCellCreate(validations.RiskMatrixCellCreate):
+    pass
 
 
 @app.post('/api/risk_matrix_cells')
-def crear_risk_matrix_cell(payload: RiskMatrixCellCreate, admin=Depends(require_admin)):
+@limiter.limit("20/minute")
+def crear_risk_matrix_cell(request: Request, payload: RiskMatrixCellCreate, admin=Depends(require_admin)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -1283,11 +1425,12 @@ def crear_risk_matrix_cell(payload: RiskMatrixCellCreate, admin=Depends(require_
         conn.close()
         return {'cell_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/risk_matrix_cells')
-def listar_risk_matrix_cells(matrix_id: Optional[int] = None, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_risk_matrix_cells(request: Request, matrix_id: Optional[int] = None, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1300,11 +1443,12 @@ def listar_risk_matrix_cells(matrix_id: Optional[int] = None, user=Depends(get_c
         conn.close()
         return {'risk_matrix_cells': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/risk_matrix_cells/{cell_id}')
-def obtener_risk_matrix_cell(cell_id: int, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def obtener_risk_matrix_cell(request: Request, cell_id: int, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1313,14 +1457,15 @@ def obtener_risk_matrix_cell(cell_id: int, user=Depends(get_current_user)):
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Cell not found')
+            raise exceptions.NotFoundError('Risk Matrix Cell', str(cell_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/risk_matrices')
-def listar_risk_matrices(estudio_id: Optional[int] = None, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_risk_matrices(request: Request, estudio_id: Optional[int] = None, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1333,19 +1478,17 @@ def listar_risk_matrices(estudio_id: Optional[int] = None, user=Depends(get_curr
         conn.close()
         return {'risk_matrices': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 # ---------- CRUD Sesiones (logs de sesión) ----------
-class SesionCreate(BaseModel):
-    user_id: int
-    inicio: Optional[str] = None
-    fin: Optional[str] = None
-    ip: Optional[str] = None
+class SesionCreate(validations.SessionCreate):
+    pass
 
 
 @app.post('/api/sesiones')
-def crear_sesion(payload: SesionCreate, user=Depends(get_current_user)):
+@limiter.limit("10/minute")
+def crear_sesion(request: Request, payload: SesionCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -1356,11 +1499,12 @@ def crear_sesion(payload: SesionCreate, user=Depends(get_current_user)):
         conn.close()
         return {'sesion_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/sesiones')
-def listar_sesiones(user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_sesiones(request: Request, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1370,20 +1514,17 @@ def listar_sesiones(user=Depends(get_current_user)):
         conn.close()
         return {'sesiones': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 # ---------- CRUD Auditoria ----------
-class AuditoriaCreate(BaseModel):
-    entidad: str
-    entidad_id: Optional[int] = None
-    accion: str
-    usuario_id: Optional[int] = None
-    detalle: Optional[dict] = None
+class AuditoriaCreate(validations.AuditLogCreate):
+    pass
 
 
 @app.post('/api/auditoria')
-def crear_auditoria(payload: AuditoriaCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def crear_auditoria(request: Request, payload: AuditoriaCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -1394,11 +1535,12 @@ def crear_auditoria(payload: AuditoriaCreate, user=Depends(get_current_user)):
         conn.close()
         return {'auditoria_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/auditoria')
-def listar_auditoria(limit: Optional[int] = 200, user=Depends(get_optional_current_user)):
+@limiter.limit("100/minute")
+def listar_auditoria(request: Request, limit: Optional[int] = 200, user=Depends(get_optional_current_user)):
     try:
         # En entornos de desarrollo se puede permitir lectura pública si se activa la variable DEV_PUBLIC_READ=1
         if os.getenv('DEV_PUBLIC_READ', '0') != '1':
@@ -1434,17 +1576,17 @@ def listar_auditoria(limit: Optional[int] = 200, user=Depends(get_optional_curre
         # Re-raise HTTPExceptions (401/403) tal cual
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 # ---------- CRUD Causas y Consecuencias ----------
-class CausaCreate(BaseModel):
-    analisis_id: int
-    descripcion: str
+class CausaCreate(validations.CauseCreate):
+    pass
 
 
 @app.post('/api/causas')
-def crear_causa(payload: CausaCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def crear_causa(request: Request, payload: CausaCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -1455,11 +1597,12 @@ def crear_causa(payload: CausaCreate, user=Depends(get_current_user)):
         conn.close()
         return {'causa_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/causas')
-def listar_causas(analisis_id: Optional[int] = None, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_causas(request: Request, analisis_id: Optional[int] = None, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1472,11 +1615,12 @@ def listar_causas(analisis_id: Optional[int] = None, user=Depends(get_current_us
         conn.close()
         return {'causas': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/causas/{causa_id}')
-def obtener_causa(causa_id: int, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def obtener_causa(request: Request, causa_id: int, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1485,19 +1629,19 @@ def obtener_causa(causa_id: int, user=Depends(get_current_user)):
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Causa no encontrada')
+            raise exceptions.NotFoundError('Causa', str(causa_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
-class ConsecuenciaCreate(BaseModel):
-    analisis_id: int
-    descripcion: str
+class ConsecuenciaCreate(validations.ConsequenceCreate):
+    pass
 
 
 @app.post('/api/consecuencias')
-def crear_consecuencia(payload: ConsecuenciaCreate, user=Depends(get_current_user)):
+@limiter.limit("20/minute")
+def crear_consecuencia(request: Request, payload: ConsecuenciaCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -1508,11 +1652,12 @@ def crear_consecuencia(payload: ConsecuenciaCreate, user=Depends(get_current_use
         conn.close()
         return {'consecuencia_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/consecuencias')
-def listar_consecuencias(analisis_id: Optional[int] = None, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def listar_consecuencias(request: Request, analisis_id: Optional[int] = None, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1525,11 +1670,12 @@ def listar_consecuencias(analisis_id: Optional[int] = None, user=Depends(get_cur
         conn.close()
         return {'consecuencias': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/consecuencias/{consecuencia_id}')
-def obtener_consecuencia(consecuencia_id: int, user=Depends(get_current_user)):
+@limiter.limit("100/minute")
+def obtener_consecuencia(request: Request, consecuencia_id: int, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1538,21 +1684,20 @@ def obtener_consecuencia(consecuencia_id: int, user=Depends(get_current_user)):
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Consecuencia no encontrada')
+            raise exceptions.NotFoundError('Consecuencia', str(consecuencia_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 # ---------- CRUD Historial Recomendaciones ----------
-class HistorialRecCreate(BaseModel):
-    recomendacion_id: int
-    cambio: str
-    usuario_id: Optional[int] = None
+class HistorialRecCreate(validations.HistoryRecCreate):
+    pass
 
 
 @app.post('/api/historial_recomendaciones')
-def crear_historial_rec(payload: HistorialRecCreate, user=Depends(get_current_user)):
+@limiter.limit("10/minute")
+def crear_historial_rec(request: Request, payload: HistorialRecCreate, user=Depends(get_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor()
@@ -1563,11 +1708,12 @@ def crear_historial_rec(payload: HistorialRecCreate, user=Depends(get_current_us
         conn.close()
         return {'historial_id': nid}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/historial_recomendaciones')
-def listar_historial_recomendaciones(recomendacion_id: Optional[int] = None, user=Depends(get_optional_current_user)):
+@limiter.limit("100/minute")
+def listar_historial_recomendaciones(request: Request, recomendacion_id: Optional[int] = None, user=Depends(get_optional_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1580,11 +1726,12 @@ def listar_historial_recomendaciones(recomendacion_id: Optional[int] = None, use
         conn.close()
         return {'historial_recomendaciones': rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/historial_recomendaciones/{hist_id}')
-def obtener_historial_recomendacion(hist_id: int, user=Depends(get_optional_current_user)):
+@limiter.limit("100/minute")
+def obtener_historial_recomendacion(request: Request, hist_id: int, user=Depends(get_optional_current_user)):
     try:
         conn = get_connection(DB_NAME)
         cur = conn.cursor(dictionary=True)
@@ -1593,15 +1740,15 @@ def obtener_historial_recomendacion(hist_id: int, user=Depends(get_optional_curr
         cur.close()
         conn.close()
         if not row:
-            raise HTTPException(status_code=404, detail='Historial not found')
+            raise exceptions.NotFoundError('Historial Recomendación', str(hist_id))
         return row
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 # ---------- Dashboard aggregated endpoints ----------
 @app.get('/api/dashboard/kpis')
-def dashboard_kpis(user=Depends(get_optional_current_user)):
+def dashboard_kpis(request: Request, user=Depends(get_optional_current_user)):
     try:
         # Allow anonymous read in dev only
         if os.getenv('DEV_PUBLIC_READ', '0') != '1':
@@ -1639,11 +1786,11 @@ def dashboard_kpis(user=Depends(get_optional_current_user)):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/dashboard/risk_matrix')
-def dashboard_risk_matrix(user=Depends(get_optional_current_user)):
+def dashboard_risk_matrix(request: Request, user=Depends(get_optional_current_user)):
     try:
         if os.getenv('DEV_PUBLIC_READ', '0') != '1':
             if not user:
@@ -1691,11 +1838,11 @@ def dashboard_risk_matrix(user=Depends(get_optional_current_user)):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/dashboard/by_level')
-def dashboard_by_level(user=Depends(get_optional_current_user)):
+def dashboard_by_level(request: Request, user=Depends(get_optional_current_user)):
     try:
         if os.getenv('DEV_PUBLIC_READ', '0') != '1':
             if not user:
@@ -1713,11 +1860,11 @@ def dashboard_by_level(user=Depends(get_optional_current_user)):
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/dashboard/by_location')
-def dashboard_by_location(limit: Optional[int] = 20, user=Depends(get_optional_current_user)):
+def dashboard_by_location(request: Request, limit: Optional[int] = 20, user=Depends(get_optional_current_user)):
     try:
         if os.getenv('DEV_PUBLIC_READ', '0') != '1':
             if not user:
@@ -1732,11 +1879,11 @@ def dashboard_by_location(limit: Optional[int] = 20, user=Depends(get_optional_c
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/dashboard/actions_critical')
-def dashboard_actions_critical(limit: Optional[int] = 50, user=Depends(get_optional_current_user)):
+def dashboard_actions_critical(request: Request, limit: Optional[int] = 50, user=Depends(get_optional_current_user)):
     try:
         if os.getenv('DEV_PUBLIC_READ', '0') != '1':
             if not user:
@@ -1766,11 +1913,11 @@ def dashboard_actions_critical(limit: Optional[int] = 50, user=Depends(get_optio
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/dashboard/trends')
-def dashboard_trends(months: Optional[int] = 12, user=Depends(get_optional_current_user)):
+def dashboard_trends(request: Request, months: Optional[int] = 12, user=Depends(get_optional_current_user)):
     try:
         if os.getenv('DEV_PUBLIC_READ', '0') != '1':
             if not user:
@@ -1799,11 +1946,11 @@ def dashboard_trends(months: Optional[int] = 12, user=Depends(get_optional_curre
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 @app.get('/api/dashboard/activity')
-def dashboard_activity(limit: Optional[int] = 50, user=Depends(get_optional_current_user)):
+def dashboard_activity(request: Request, limit: Optional[int] = 50, user=Depends(get_optional_current_user)):
     try:
         if os.getenv('DEV_PUBLIC_READ', '0') != '1':
             if not user:
@@ -1823,7 +1970,7 @@ def dashboard_activity(limit: Optional[int] = 50, user=Depends(get_optional_curr
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise exceptions.handle_mysql_database_error(e)
 
 
 

@@ -16,19 +16,53 @@ export default function Dashboard(){
   const [actions, setActions] = useState([])
   const [activity, setActivity] = useState([])
   const [trends, setTrends] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     async function load() {
       try {
+        setLoading(true)
+        setError(null)
+
+        // Verificar si hay token antes de cargar datos
+        const token = api.getAuthToken()
+        if (!token) {
+          setError('No autenticado. Redirigiendo al login...')
+          return
+        }
+
         const [k, m, l, loc, a, act, t] = await Promise.all([
-          api.fetchDashboardKpis().catch(()=>null),
-          api.fetchDashboardRiskMatrix().catch(()=>[]),
-          api.fetchDashboardByLevel().catch(()=>null),
-          api.fetchDashboardByLocation().catch(()=>[]),
-          api.fetchDashboardActionsCritical().catch(()=>[]),
-          api.fetchDashboardActivity().catch(()=>[]),
-          api.fetchDashboardTrends().catch(()=>null)
+          api.fetchDashboardKpis().catch((err) => {
+            console.error('Error loading KPIs:', err)
+            return null
+          }),
+          api.fetchDashboardRiskMatrix().catch((err) => {
+            console.error('Error loading risk matrix:', err)
+            return []
+          }),
+          api.fetchDashboardByLevel().catch((err) => {
+            console.error('Error loading by level:', err)
+            return null
+          }),
+          api.fetchDashboardByLocation().catch((err) => {
+            console.error('Error loading by location:', err)
+            return []
+          }),
+          api.fetchDashboardActionsCritical().catch((err) => {
+            console.error('Error loading actions:', err)
+            return []
+          }),
+          api.fetchDashboardActivity().catch((err) => {
+            console.error('Error loading activity:', err)
+            return []
+          }),
+          api.fetchDashboardTrends().catch((err) => {
+            console.error('Error loading trends:', err)
+            return null
+          })
         ])
+
         setKpis(k)
         setMatrixPoints(m || [])
         setByLevel(l)
@@ -38,21 +72,55 @@ export default function Dashboard(){
         setTrends(t || null)
       } catch (e) {
         console.error('Dashboard load error', e)
+        setError('Error al cargar los datos del dashboard')
+      } finally {
+        setLoading(false)
       }
     }
     load()
   }, [])
 
+  // Mostrar loading mientras se cargan los datos
+  if (loading) {
+    return (
+      <div className="dashboard-container">
+        <div className="dashboard-loading">
+          Cargando datos del dashboard...
+        </div>
+        <div className="dashboard-kpis">
+          <KpiCard title="Total Estudios" value="..." />
+          <KpiCard title="Riesgos Identificados" value="..." />
+          <KpiCard title="Acciones Abiertas" value="..." />
+          <KpiCard title="Riesgos Críticos" value="..." />
+        </div>
+      </div>
+    )
+  }
+
+  // Mostrar error si hay problemas de autenticación o carga
+  if (error) {
+    return (
+      <div className="dashboard-container">
+        <div className="dashboard-error">
+          <div style={{fontSize:'18px', marginBottom:'16px'}}>⚠️ {error}</div>
+          <div style={{fontSize:'14px', color:'#666'}}>
+            Asegúrate de estar logueado para ver los datos del dashboard.
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div style={{padding:16}}>
-      <div style={{display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:12, marginBottom:12}}>
-        <KpiCard title="Total Estudios" value={kpis?.total_estudios ?? '-'} />
-        <KpiCard title="Riesgos Identificados" value={kpis?.riesgos_identificados ?? '-'} color="#d9534f" />
-        <KpiCard title="Acciones Abiertas" value={kpis?.acciones_abiertas ?? '-'} color="#f0ad4e" />
-        <KpiCard title="Riesgos Críticos" value={kpis?.riesgos_criticos ?? '-'} color="#c62828" />
+    <div className="dashboard-container">
+      <div className="dashboard-kpis">
+        <KpiCard title="Total Estudios" value={kpis?.total_estudios ?? '0'} />
+        <KpiCard title="Riesgos Identificados" value={kpis?.riesgos_identificados ?? '0'} />
+        <KpiCard title="Acciones Abiertas" value={kpis?.acciones_abiertas ?? '0'} />
+        <KpiCard title="Riesgos Críticos" value={kpis?.riesgos_criticos ?? '0'} />
       </div>
 
-      <div style={{display:'grid', gridTemplateColumns:'2fr 1fr', gap:12}}>
+      <div className="dashboard-main-grid">
         <RiskMatrix points={matrixPoints} onPointClick={(p)=>{ console.log('drill', p) }} />
 
         <div style={{display:'flex', flexDirection:'column', gap:12}}>
@@ -61,12 +129,12 @@ export default function Dashboard(){
         </div>
       </div>
 
-      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginTop:12}}>
+      <div className="dashboard-secondary-grid">
         <ActionsTable rows={actions} />
         <ActivityFeed items={activity} />
       </div>
 
-      <div style={{marginTop:12}}>
+      <div className="dashboard-bottom-section">
         <TrendsLine series={trends} />
       </div>
     </div>
